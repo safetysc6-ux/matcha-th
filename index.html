@@ -304,6 +304,7 @@
         </div>
     </main>
 
+    <!-- Modal สินค้า -->
     <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content border-0 shadow">
         <div class="modal-header bg-light border-0"><h5 class="modal-title" id="productModalLabel">จัดการสินค้า</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">
@@ -311,12 +312,26 @@
             <div class="mb-3"><label class="form-label">ชื่อ</label><input type="text" class="form-control" id="prod-name" required></div>
             <div class="mb-3"><label class="form-label">คำอธิบาย</label><textarea class="form-control" id="prod-desc" rows="3" required></textarea></div>
             <div class="mb-3"><label class="form-label">ราคา (฿)</label><input type="number" class="form-control" id="prod-price" required></div>
-            <div class="mb-3"><label class="form-label">URL รูปภาพ</label><input type="text" class="form-control" id="prod-image"></div>
+            
+            <!-- เปลี่ยนเป็นอัพโหลดรูปภาพ -->
+            <div class="mb-3">
+                <label class="form-label">อัพโหลดรูปภาพ</label>
+                <input type="file" class="form-control" id="prod-image-file" accept="image/*">
+                <input type="hidden" id="prod-image-url"> <!-- ซ่อนไว้เก็บ URL เดิม -->
+                <div id="prod-image-preview-container" class="mt-2 text-center" style="display: none;">
+                    <img id="prod-image-preview-img" src="" alt="preview" class="img-thumbnail" style="max-height: 120px;">
+                </div>
+            </div>
+
             <div class="mb-3"><label class="form-label text-primary"><i class="bi bi-link-45deg"></i> ลิงก์ Affiliate (Shopee/Lazada)</label><input type="url" class="form-control border-primary" id="prod-affiliate"></div>
         </div>
-        <div class="modal-footer border-0"><button class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button><button class="btn btn-matcha" onclick="window.saveProduct()">บันทึก</button></div>
+        <div class="modal-footer border-0">
+            <button class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button>
+            <button class="btn btn-matcha" id="btn-save-product" onclick="window.saveProduct()">บันทึก</button>
+        </div>
     </div></div></div>
 
+    <!-- Modal สูตร -->
     <div class="modal fade" id="recipeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content border-0 shadow">
         <div class="modal-header bg-light border-0"><h5 class="modal-title" id="recipeModalLabel">จัดการสูตร</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">
@@ -324,9 +339,21 @@
             <div class="mb-3"><label class="form-label">ชื่อสูตร</label><input type="text" class="form-control" id="rec-name" required></div>
             <div class="mb-3"><label class="form-label">ส่วนผสม</label><input type="text" class="form-control" id="rec-ingredients" required></div>
             <div class="mb-3"><label class="form-label">ระดับ</label><select class="form-select" id="rec-difficulty"><option>ง่าย</option><option>ปานกลาง</option><option>ยาก</option></select></div>
-            <div class="mb-3"><label class="form-label">URL รูปภาพ</label><input type="text" class="form-control" id="rec-image"></div>
+            
+            <!-- เปลี่ยนเป็นอัพโหลดรูปภาพ -->
+            <div class="mb-3">
+                <label class="form-label">อัพโหลดรูปภาพ</label>
+                <input type="file" class="form-control" id="rec-image-file" accept="image/*">
+                <input type="hidden" id="rec-image-url"> <!-- ซ่อนไว้เก็บ URL เดิม -->
+                <div id="rec-image-preview-container" class="mt-2 text-center" style="display: none;">
+                    <img id="rec-image-preview-img" src="" alt="preview" class="img-thumbnail" style="max-height: 120px;">
+                </div>
+            </div>
         </div>
-        <div class="modal-footer border-0"><button class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button><button class="btn btn-matcha" onclick="window.saveRecipe()">บันทึก</button></div>
+        <div class="modal-footer border-0">
+            <button class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button>
+            <button class="btn btn-matcha" id="btn-save-recipe" onclick="window.saveRecipe()">บันทึก</button>
+        </div>
     </div></div></div>
 
     <div class="toast-container" id="toastContainer"></div>
@@ -365,7 +392,6 @@
             if(SUPABASE_URL === 'YOUR_SUPABASE_URL') {
                 console.warn("⚠️ แจ้งเตือน: ยังไม่ได้ใส่ Supabase URL & Key ข้อมูลจะไม่สามารถดึงได้");
             }
-            // เรียกใช้ตัวแปร supabaseClient ที่ประกาศไว้ด้านบน
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         } catch(e) {
             console.error("Supabase Init Error", e);
@@ -468,6 +494,25 @@
         }
 
         const API = {
+            // ระบบจัดการไฟล์อัพโหลด (อัพขึ้น Supabase Storage บัคเก็ตชื่อ 'images')
+            uploadImage: async (file) => {
+                if(!supabaseClient) return null;
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+                const filePath = `public/${fileName}`;
+
+                const { error } = await supabaseClient.storage.from('images').upload(filePath, file);
+                
+                if (error) {
+                    console.error("Upload error:", error);
+                    throw error;
+                }
+                
+                // ดึง Public URL ของไฟล์ที่เพิ่งอัพโหลดเสร็จ
+                const { data } = supabaseClient.storage.from('images').getPublicUrl(filePath);
+                return data.publicUrl;
+            },
+
             getProducts: async () => {
                 if(!supabaseClient) return [];
                 const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: true });
@@ -537,11 +582,15 @@
 
             document.getElementById('admin-products-tbody').innerHTML = products.map(p => `
                 <tr>
-                    <td class="fw-bold">${p.name}<br>${p.affiliate_url ? `<a href="${p.affiliate_url}" target="_blank" class="badge bg-primary text-decoration-none mt-1"><i class="bi bi-link"></i> ลิงก์</a>` : ''}</td>
+                    <td class="fw-bold">
+                        <img src="${p.image_url}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 8px;">
+                        ${p.name}<br>
+                        ${p.affiliate_url ? `<a href="${p.affiliate_url}" target="_blank" class="badge bg-primary text-decoration-none mt-1"><i class="bi bi-link"></i> ลิงก์</a>` : ''}
+                    </td>
                     <td class="text-muted small">${p.description}</td>
                     <td>฿${p.price}</td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-light text-primary me-1" onclick='window.editProduct(${JSON.stringify(p)})'><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-light text-primary me-1" onclick='window.editProduct(${JSON.stringify(p).replace(/'/g, "&apos;")})'><i class="bi bi-pencil"></i></button>
                         <button class="btn btn-sm btn-light text-danger" onclick='window.deleteProduct("${p.id}")'><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
@@ -549,10 +598,13 @@
 
             document.getElementById('admin-recipes-tbody').innerHTML = recipes.map(r => `
                 <tr>
-                    <td class="fw-bold">${r.title}</td>
+                    <td class="fw-bold">
+                        <img src="${r.image_url}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 8px;">
+                        ${r.title}
+                    </td>
                     <td><span class="badge bg-light text-dark border">${r.difficulty}</span></td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-light text-primary me-1" onclick='window.editRecipe(${JSON.stringify(r)})'><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-light text-primary me-1" onclick='window.editRecipe(${JSON.stringify(r).replace(/'/g, "&apos;")})'><i class="bi bi-pencil"></i></button>
                         <button class="btn btn-sm btn-light text-danger" onclick='window.deleteRecipe("${r.id}")'><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
@@ -602,26 +654,179 @@
             document.getElementById('res-profit').parentElement.className = profit < 0 ? 'd-flex justify-content-between mb-2 text-danger' : 'd-flex justify-content-between mb-2 text-success';
         }
 
-        window.openProductModal = () => { document.getElementById('prod-id').value=''; document.getElementById('prod-name').value=''; document.getElementById('prod-desc').value=''; document.getElementById('prod-price').value=''; document.getElementById('prod-image').value=''; document.getElementById('prod-affiliate').value=''; document.getElementById('productModalLabel').innerText='เพิ่มสินค้า'; productModalInst.show(); };
-        window.editProduct = (p) => { document.getElementById('prod-id').value=p.id; document.getElementById('prod-name').value=p.name; document.getElementById('prod-desc').value=p.description; document.getElementById('prod-price').value=p.price; document.getElementById('prod-image').value=p.image_url||''; document.getElementById('prod-affiliate').value=p.affiliate_url||''; document.getElementById('productModalLabel').innerText='แก้ไขสินค้า'; productModalInst.show(); };
-        window.saveProduct = async () => {
-            const data = { name: document.getElementById('prod-name').value, description: document.getElementById('prod-desc').value, price: parseFloat(document.getElementById('prod-price').value), image_url: document.getElementById('prod-image').value || `https://placehold.co/400x300/78866B/FFF?text=${encodeURIComponent(document.getElementById('prod-name').value)}`, affiliate_url: document.getElementById('prod-affiliate').value };
-            if(!data.name || !data.price) return window.showToast('กรอกข้อมูลไม่ครบ', 'danger');
-            const id = document.getElementById('prod-id').value;
-            if(id) { await API.updateProduct(id, data); window.showToast('อัพเดทเรียบร้อย'); } else { await API.addProduct(data); window.showToast('เพิ่มเรียบร้อย'); }
-            productModalInst.hide(); renderAdminViews(); renderPublicViews();
+        // --- ระบบ Preview รูปภาพตอนเลือกไฟล์ ---
+        function handleImagePreview(inputId, previewImgId, previewContainerId) {
+            document.getElementById(inputId).addEventListener('change', function(e) {
+                if(e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById(previewImgId).src = e.target.result;
+                        document.getElementById(previewContainerId).style.display = 'block';
+                    }
+                    reader.readAsDataURL(e.target.files[0]);
+                } else {
+                    document.getElementById(previewContainerId).style.display = 'none';
+                }
+            });
+        }
+        handleImagePreview('prod-image-file', 'prod-image-preview-img', 'prod-image-preview-container');
+        handleImagePreview('rec-image-file', 'rec-image-preview-img', 'rec-image-preview-container');
+
+        // --- จัดการหน้าต่าง Modal (สินค้า) ---
+        window.openProductModal = () => { 
+            document.getElementById('prod-id').value=''; 
+            document.getElementById('prod-name').value=''; 
+            document.getElementById('prod-desc').value=''; 
+            document.getElementById('prod-price').value=''; 
+            document.getElementById('prod-image-file').value = '';
+            document.getElementById('prod-image-url').value = '';
+            document.getElementById('prod-image-preview-container').style.display = 'none';
+            document.getElementById('prod-affiliate').value=''; 
+            document.getElementById('productModalLabel').innerText='เพิ่มสินค้า'; 
+            productModalInst.show(); 
         };
+        
+        window.editProduct = (p) => { 
+            document.getElementById('prod-id').value=p.id; 
+            document.getElementById('prod-name').value=p.name; 
+            document.getElementById('prod-desc').value=p.description; 
+            document.getElementById('prod-price').value=p.price; 
+            document.getElementById('prod-image-file').value = '';
+            document.getElementById('prod-image-url').value = p.image_url || '';
+            
+            if(p.image_url) {
+                document.getElementById('prod-image-preview-img').src = p.image_url;
+                document.getElementById('prod-image-preview-container').style.display = 'block';
+            } else {
+                document.getElementById('prod-image-preview-container').style.display = 'none';
+            }
+            
+            document.getElementById('prod-affiliate').value=p.affiliate_url||''; 
+            document.getElementById('productModalLabel').innerText='แก้ไขสินค้า'; 
+            productModalInst.show(); 
+        };
+        
+        window.saveProduct = async () => {
+            const name = document.getElementById('prod-name').value;
+            const price = parseFloat(document.getElementById('prod-price').value);
+            if(!name || isNaN(price)) return window.showToast('กรอกข้อมูลไม่ครบ', 'danger');
+
+            const btn = document.getElementById('btn-save-product');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> กำลังอัพโหลด...';
+
+            try {
+                let imageUrl = document.getElementById('prod-image-url').value;
+                const fileInput = document.getElementById('prod-image-file');
+                
+                // ถ้ามีการเลือกไฟล์ใหม่ ให้ทำการอัพโหลด
+                if (fileInput.files.length > 0) {
+                    imageUrl = await API.uploadImage(fileInput.files[0]);
+                }
+
+                // ถ้าไม่มีรูป ให้ใช้รูป Placeholder ชั่วคราว
+                if (!imageUrl) {
+                    imageUrl = `https://placehold.co/400x300/78866B/FFF?text=${encodeURIComponent(name)}`;
+                }
+
+                const data = { 
+                    name: name, 
+                    description: document.getElementById('prod-desc').value, 
+                    price: price, 
+                    image_url: imageUrl, 
+                    affiliate_url: document.getElementById('prod-affiliate').value 
+                };
+
+                const id = document.getElementById('prod-id').value;
+                if(id) { await API.updateProduct(id, data); window.showToast('อัพเดทเรียบร้อย'); } 
+                else { await API.addProduct(data); window.showToast('เพิ่มเรียบร้อย'); }
+                
+                productModalInst.hide(); renderAdminViews(); renderPublicViews();
+            } catch(e) {
+                window.showToast('เกิดข้อผิดพลาดในการอัพโหลดรูปภาพ กรุณาตรวจสอบ Bucket', 'danger');
+                console.error(e);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'บันทึก';
+            }
+        };
+
         window.deleteProduct = async (id) => { await API.deleteProduct(id); window.showToast('ลบเรียบร้อย'); renderAdminViews(); renderPublicViews(); };
 
-        window.openRecipeModal = () => { document.getElementById('rec-id').value=''; document.getElementById('rec-name').value=''; document.getElementById('rec-ingredients').value=''; document.getElementById('rec-difficulty').value='ง่าย'; document.getElementById('rec-image').value=''; document.getElementById('recipeModalLabel').innerText='เพิ่มสูตร'; recipeModalInst.show(); };
-        window.editRecipe = (r) => { document.getElementById('rec-id').value=r.id; document.getElementById('rec-name').value=r.title; document.getElementById('rec-ingredients').value=r.ingredients_summary; document.getElementById('rec-difficulty').value=r.difficulty; document.getElementById('rec-image').value=r.image_url||''; document.getElementById('recipeModalLabel').innerText='แก้ไขสูตร'; recipeModalInst.show(); };
-        window.saveRecipe = async () => {
-            const data = { title: document.getElementById('rec-name').value, ingredients_summary: document.getElementById('rec-ingredients').value, difficulty: document.getElementById('rec-difficulty').value, image_url: document.getElementById('rec-image').value || `https://placehold.co/400x300/FDFBF7/78866B?text=${encodeURIComponent(document.getElementById('rec-name').value)}` };
-            if(!data.title || !data.ingredients_summary) return window.showToast('กรอกข้อมูลไม่ครบ', 'danger');
-            const id = document.getElementById('rec-id').value;
-            if(id) { await API.updateRecipe(id, data); window.showToast('อัพเดทเรียบร้อย'); } else { await API.addRecipe(data); window.showToast('เพิ่มเรียบร้อย'); }
-            recipeModalInst.hide(); renderAdminViews(); renderPublicViews();
+        // --- จัดการหน้าต่าง Modal (สูตร) ---
+        window.openRecipeModal = () => { 
+            document.getElementById('rec-id').value=''; 
+            document.getElementById('rec-name').value=''; 
+            document.getElementById('rec-ingredients').value=''; 
+            document.getElementById('rec-difficulty').value='ง่าย'; 
+            document.getElementById('rec-image-file').value=''; 
+            document.getElementById('rec-image-url').value = '';
+            document.getElementById('rec-image-preview-container').style.display = 'none';
+            document.getElementById('recipeModalLabel').innerText='เพิ่มสูตร'; 
+            recipeModalInst.show(); 
         };
+        
+        window.editRecipe = (r) => { 
+            document.getElementById('rec-id').value=r.id; 
+            document.getElementById('rec-name').value=r.title; 
+            document.getElementById('rec-ingredients').value=r.ingredients_summary; 
+            document.getElementById('rec-difficulty').value=r.difficulty; 
+            document.getElementById('rec-image-file').value=''; 
+            document.getElementById('rec-image-url').value = r.image_url || '';
+            
+            if(r.image_url) {
+                document.getElementById('rec-image-preview-img').src = r.image_url;
+                document.getElementById('rec-image-preview-container').style.display = 'block';
+            } else {
+                document.getElementById('rec-image-preview-container').style.display = 'none';
+            }
+            
+            document.getElementById('recipeModalLabel').innerText='แก้ไขสูตร'; 
+            recipeModalInst.show(); 
+        };
+
+        window.saveRecipe = async () => {
+            const title = document.getElementById('rec-name').value;
+            const ingredients = document.getElementById('rec-ingredients').value;
+            if(!title || !ingredients) return window.showToast('กรอกข้อมูลไม่ครบ', 'danger');
+
+            const btn = document.getElementById('btn-save-recipe');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> กำลังอัพโหลด...';
+
+            try {
+                let imageUrl = document.getElementById('rec-image-url').value;
+                const fileInput = document.getElementById('rec-image-file');
+                
+                if (fileInput.files.length > 0) {
+                    imageUrl = await API.uploadImage(fileInput.files[0]);
+                }
+
+                if (!imageUrl) {
+                    imageUrl = `https://placehold.co/400x300/FDFBF7/78866B?text=${encodeURIComponent(title)}`;
+                }
+
+                const data = { 
+                    title: title, 
+                    ingredients_summary: ingredients, 
+                    difficulty: document.getElementById('rec-difficulty').value, 
+                    image_url: imageUrl 
+                };
+
+                const id = document.getElementById('rec-id').value;
+                if(id) { await API.updateRecipe(id, data); window.showToast('อัพเดทเรียบร้อย'); } 
+                else { await API.addRecipe(data); window.showToast('เพิ่มเรียบร้อย'); }
+                
+                recipeModalInst.hide(); renderAdminViews(); renderPublicViews();
+            } catch(e) {
+                window.showToast('เกิดข้อผิดพลาดในการอัพโหลดรูปภาพ กรุณาตรวจสอบ Bucket', 'danger');
+                console.error(e);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'บันทึก';
+            }
+        };
+
         window.deleteRecipe = async (id) => { await API.deleteRecipe(id); window.showToast('ลบเรียบร้อย'); renderAdminViews(); renderPublicViews(); };
 
         window.addEventListener('hashchange', handleRoute);
