@@ -25,7 +25,7 @@
             --text-muted: #737373;
             --accent-wood: #D4C3A3;
             --shadow-sm: 0 4px 12px rgba(0,0,0,0.03);
-            --shadow-md: 0 8px 24px rgba(0,0,0,0.06);
+            --shadow-md: 0 12px 32px rgba(120, 134, 107, 0.08);
             --radius-md: 12px;
             --radius-lg: 24px;
         }
@@ -36,90 +36,226 @@
             color: var(--text-main);
             line-height: 1.6;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
         h1, h2, h3, h4, h5, h6 { font-weight: 500; letter-spacing: -0.02em; }
         
+        /* ---------------------------------
+           🌟 PREMIUM NAVBAR STYLES
+           --------------------------------- */
         .navbar {
-            background-color: rgba(253, 251, 247, 0.9) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            padding: 1rem 0;
+            background-color: transparent !important; /* เริ่มต้นโปร่งใส */
+            padding: 1.5rem 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .navbar-brand { font-weight: 600; color: var(--matcha-primary) !important; font-size: 1.5rem; letter-spacing: 0.05em; }
-        .nav-link { color: var(--text-main) !important; font-weight: 400; transition: color 0.3s ease; margin: 0 0.5rem; }
-        .nav-link:hover, .nav-link.active { color: var(--matcha-primary) !important; }
-
-        .btn-matcha { background-color: var(--matcha-primary); color: white; border: none; border-radius: 50px; padding: 0.6rem 1.5rem; font-weight: 500; transition: all 0.3s ease; }
-        .btn-matcha:hover { background-color: var(--matcha-dark); color: white; transform: translateY(-2px); box-shadow: var(--shadow-sm); }
-        .btn-outline-matcha { background-color: transparent; color: var(--matcha-primary); border: 1px solid var(--matcha-primary); border-radius: 50px; padding: 0.6rem 1.5rem; font-weight: 500; transition: all 0.3s ease; }
-        .btn-outline-matcha:hover { background-color: var(--matcha-primary); color: white; }
         
+        /* สไตล์เมื่อเลื่อนหน้าจอ (Scrolled) */
+        .navbar.scrolled {
+            background-color: rgba(253, 251, 247, 0.92) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 0.8rem 0;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+            border-bottom: 1px solid rgba(120, 134, 107, 0.1);
+        }
+
+        .navbar-brand { 
+            font-weight: 600; 
+            color: var(--matcha-dark) !important; 
+            font-size: 1.6rem; 
+            letter-spacing: 0.02em; 
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand i {
+            color: var(--matcha-primary);
+            transition: transform 0.3s ease;
+        }
+        .navbar-brand:hover i {
+            transform: rotate(-10deg) scale(1.1);
+        }
+
+        /* 🌟 Animated Nav Links */
+        .nav-link { 
+            color: var(--text-main) !important; 
+            font-weight: 500; 
+            margin: 0 0.8rem;
+            position: relative;
+            padding: 0.5rem 0 !important;
+            opacity: 0.8;
+            transition: opacity 0.3s ease, color 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active { 
+            color: var(--matcha-primary) !important; 
+            opacity: 1;
+        }
+        
+        /* เส้นใต้เคลื่อนไหวเวลา Hover */
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--matcha-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* ปุ่มต่างๆ */
+        .btn-matcha { background-color: var(--matcha-primary); color: white; border: none; border-radius: 50px; padding: 0.7rem 1.8rem; font-weight: 500; transition: all 0.3s ease; letter-spacing: 0.02em; }
+        .btn-matcha:hover { background-color: var(--matcha-dark); color: white; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(120, 134, 107, 0.3); }
+        
+        .btn-outline-matcha { background-color: transparent; color: var(--matcha-primary); border: 1.5px solid var(--matcha-primary); border-radius: 50px; padding: 0.7rem 1.8rem; font-weight: 500; transition: all 0.3s ease; }
+        .btn-outline-matcha:hover { background-color: var(--matcha-primary); color: white; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(120, 134, 107, 0.2); }
+        
+        /* 🌟 Floating LINE Button */
+        .btn-floating-line {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background-color: #00B900;
+            color: white;
+            border-radius: 50px;
+            padding: 12px 24px;
+            box-shadow: 0 8px 24px rgba(0, 185, 0, 0.25);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            font-family: 'Inter', 'Prompt', sans-serif;
+        }
+        .btn-floating-line:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 28px rgba(0, 185, 0, 0.35);
+            color: white;
+        }
+        .btn-floating-line i { font-size: 1.4rem; }
+
+        /* Card Styles */
         .matcha-card {
-            background: white; border-radius: var(--radius-md); border: none; box-shadow: var(--shadow-sm);
-            transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%; display: flex; flex-direction: column; overflow: hidden;
+            background: white; border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.03); box-shadow: var(--shadow-sm);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); height: 100%; display: flex; flex-direction: column; overflow: hidden;
         }
         .product-card-link { text-decoration: none !important; color: inherit !important; display: block; height: 100%; }
-        .product-card-link:hover .matcha-card, .recipe-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
-        .card-img-placeholder { height: 200px; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; background-color: #eee; }
+        .product-card-link:hover .matcha-card, .recipe-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-md); border-color: rgba(120, 134, 107, 0.15); }
+        .card-img-placeholder { height: 220px; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; background-color: #eee; position: relative; overflow: hidden;}
+        .card-img-placeholder::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.1), transparent); opacity: 0; transition: opacity 0.3s ease; }
+        .product-card-link:hover .card-img-placeholder::after { opacity: 1; }
 
-        .hero-section { padding: 8rem 0 5rem; text-align: center; }
-        .hero-title { font-size: 3.5rem; font-weight: 600; color: var(--matcha-dark); margin-bottom: 1.5rem; }
-        .hero-subtitle { font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 2.5rem; }
-        .section-title { text-align: center; font-size: 2rem; margin-bottom: 3rem; position: relative; padding-bottom: 1rem; }
-        .section-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 3px; background-color: var(--matcha-light); border-radius: 3px; }
+        /* Hero Section Enhancement */
+        .hero-section { 
+            padding: 12rem 0 7rem; 
+            text-align: center; 
+            background: radial-gradient(circle at 50% 0%, #FFFFFF 0%, var(--bg-base) 70%); /* เพิ่มแสง Gradient นุ่มๆ */
+        }
+        .hero-title { font-size: 4rem; font-weight: 600; color: var(--matcha-dark); margin-bottom: 1.5rem; letter-spacing: -0.03em; }
+        .hero-subtitle { font-size: 1.15rem; color: var(--text-muted); max-width: 650px; margin: 0 auto 2.5rem; line-height: 1.8; }
         
+        .section-title { text-align: center; font-size: 2.2rem; margin-bottom: 3.5rem; position: relative; padding-bottom: 1.2rem; color: var(--matcha-dark); font-weight: 600;}
+        .section-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background-color: var(--matcha-light); border-radius: 4px; }
+        
+        /* 🌟 Footer Styles */
+        .site-footer {
+            background-color: var(--matcha-dark);
+            color: rgba(255,255,255,0.8);
+            padding: 4rem 0 2rem;
+            margin-top: 4rem;
+        }
+        .site-footer h5 { color: white; font-weight: 600; margin-bottom: 1.5rem; }
+        .site-footer a { color: rgba(255,255,255,0.8); text-decoration: none; transition: color 0.3s ease; }
+        .site-footer a:hover { color: white; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 3rem; padding-top: 1.5rem; text-align: center; font-size: 0.9rem; }
+
+        /* View Switching */
         .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .auth-container { max-width: 400px; margin: 0 auto; background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
+        .view-section.active { display: block; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         
-        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-base); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.5s ease; }
-        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1055; }
+        .auth-container { max-width: 420px; margin: 0 auto; background: white; padding: 2.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid rgba(0,0,0,0.04);}
         
-        .table-custom { background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
-        .table-custom th { background-color: #F8F9FA; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid #E5E5E5; }
-        .table-custom td { vertical-align: middle; }
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-base); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.6s ease; }
+        .spinner-matcha { color: var(--matcha-primary); width: 3.5rem; height: 3.5rem; border-width: 0.25em; }
+        
+        .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 1055; }
+        
+        .table-custom { background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.04);}
+        .table-custom th { background-color: #FDFBF7; font-weight: 500; color: var(--matcha-dark); border-bottom: 2px solid rgba(120, 134, 107, 0.1); padding: 1rem; }
+        .table-custom td { vertical-align: middle; padding: 1rem; }
+        
+        /* Mobile Navbar adjustments */
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: white;
+                padding: 1.5rem;
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-md);
+                margin-top: 1rem;
+                border: 1px solid rgba(0,0,0,0.05);
+            }
+            .nav-link::after { display: none; } /* ปิดขีดเส้นใต้ในมือถือ */
+            .nav-link { padding: 0.8rem 1rem !important; border-radius: 8px; }
+            .nav-link:hover { background-color: var(--bg-base); }
+        }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg fixed-top">
+    <!-- 🌟 PREMUIM NAVBAR -->
+    <nav class="navbar navbar-expand-lg fixed-top" id="mainNavbar">
         <div class="container">
             <a class="navbar-brand" href="#home">
                 <i class="bi bi-cup-hot-fill me-2"></i>Matcha TH
             </a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <i class="bi bi-list fs-2 text-dark"></i>
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="color: var(--matcha-dark);">
+                <i class="bi bi-list fs-1"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
+                <ul class="navbar-nav mx-auto gap-lg-2">
                     <li class="nav-item"><a class="nav-link" href="#home">หน้าแรก</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#recipes">สูตรเครื่องดื่ม</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#recipes">สูตรคาเฟ่</a></li>
                     <li class="nav-item"><a class="nav-link" href="#calculator">คำนวณต้นทุน</a></li>
                 </ul>
-                <div class="d-flex align-items-center" id="nav-auth-section">
+                <div class="d-flex align-items-center mt-3 mt-lg-0" id="nav-auth-section">
                     <!-- Auth button will be injected here via JS -->
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- 🌟 FLOATING LINE BUTTON -->
+    <a href="#" target="_blank" class="btn-floating-line">
+        <i class="bi bi-line"></i> สั่งซื้อ / สอบถาม
+    </a>
+
+    <!-- LOADING OVERLAY -->
     <div id="loading-overlay">
-        <div class="spinner-border text-success mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
-        <h5 class="text-muted">กำลังโหลดระบบ...</h5>
+        <div class="spinner-border spinner-matcha mb-4" role="status"></div>
+        <h5 class="text-muted fw-normal" style="letter-spacing: 0.1em; color: var(--matcha-dark)!important;">ชงความอร่อย...</h5>
     </div>
 
-    <main id="app-container" style="min-height: 80vh; padding-top: 60px;">
+    <main id="app-container" style="min-height: 80vh;">
 
+        <!-- VIEW: HOME -->
         <div id="view-home" class="view-section active">
             <section class="hero-section">
-                <div class="container" data-aos="fade-up">
-                    <h1 class="hero-title">ศิลปะแห่งมัทฉะแท้จากญี่ปุ่น</h1>
-                    <p class="hero-subtitle">ค้นพบผงมัทฉะเกรดพรีเมียมจากแหล่งปลูกที่ดีที่สุด พร้อมสูตรชงระดับคาเฟ่ที่คุณทำเองได้ง่ายๆ และเครื่องมือคำนวณต้นทุนสำหรับผู้ประกอบการ</p>
-                    <div class="d-flex justify-content-center gap-3">
-                        <a href="#recipes" class="btn btn-matcha">ดูสูตรชงทั้งหมด</a>
-                        <a href="#calculator" class="btn btn-outline-matcha">เริ่มคำนวณต้นทุน</a>
+                <div class="container" data-aos="fade-up" data-aos-duration="1000">
+                    <span class="badge bg-light text-success border border-success mb-3 px-3 py-2 rounded-pill shadow-sm" style="font-weight: 400;"><i class="bi bi-stars me-1"></i> ฤดูกาลเก็บเกี่ยวใหม่ล่าสุด</span>
+                    <h1 class="hero-title">ศิลปะแห่งมัทฉะแท้<br>จากไร่สู่แก้วของคุณ</h1>
+                    <p class="hero-subtitle">ค้นพบผงมัทฉะเกรดพิธีชงชาและเกรดพรีเมียมจากแหล่งปลูกที่ดีที่สุดในญี่ปุ่น พร้อมสูตรชงระดับคาเฟ่ที่คุณทำเองได้ง่ายๆ และเครื่องมือคำนวณต้นทุนสำหรับผู้ประกอบการ</p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="#recipes" class="btn btn-matcha"><i class="bi bi-journal-text me-2"></i>ดูสูตรชงทั้งหมด</a>
+                        <a href="#calculator" class="btn btn-outline-matcha"><i class="bi bi-calculator me-2"></i>เริ่มคำนวณต้นทุน</a>
                     </div>
                 </div>
             </section>
@@ -133,89 +269,95 @@
 
             <section class="py-5">
                 <div class="container">
-                    <h2 class="section-title" data-aos="fade-up">สูตรยอดนิยม</h2>
+                    <h2 class="section-title" data-aos="fade-up">สูตรคาเฟ่ยอดนิยม</h2>
                     <div class="row g-4" id="home-recipes-container"></div>
-                    <div class="text-center mt-5">
+                    <div class="text-center mt-5" data-aos="fade-up">
                         <a href="#recipes" class="btn btn-outline-matcha">ดูสูตรทั้งหมด <i class="bi bi-arrow-right ms-2"></i></a>
                     </div>
                 </div>
             </section>
         </div>
 
+        <!-- VIEW: RECIPES -->
         <div id="view-recipes" class="view-section">
-            <section class="py-5 mt-4">
-                <div class="container">
+            <section class="py-5 mt-5">
+                <div class="container mt-5">
                     <div class="text-center mb-5" data-aos="fade-in">
                         <h1 class="fw-bold text-dark mb-3">คลังสูตรเครื่องดื่มมัทฉะ</h1>
-                        <p class="text-muted mx-auto" style="max-width: 600px;">ยกระดับเมนูในร้านของคุณด้วยสูตรชงมาตรฐานคาเฟ่ที่ผ่านการทดสอบมาแล้ว</p>
+                        <p class="text-muted mx-auto" style="max-width: 600px;">ยกระดับเมนูในร้านของคุณด้วยสูตรชงมาตรฐานคาเฟ่ที่ผ่านการทดสอบมาแล้ว ทำตามได้จริงทุกขั้นตอน</p>
                     </div>
                     <div class="row g-4" id="all-recipes-container"></div>
                 </div>
             </section>
         </div>
 
+        <!-- VIEW: CALCULATOR -->
         <div id="view-calculator" class="view-section">
-            <section class="py-5 mt-4">
-                <div class="container">
+            <section class="py-5 mt-5">
+                <div class="container mt-5">
                     <div class="row justify-content-center">
                         <div class="col-lg-10">
                             <div class="text-center mb-5" data-aos="fade-up">
                                 <h1 class="fw-bold text-dark mb-3">เครื่องมือคำนวณต้นทุน</h1>
-                                <p class="text-muted">คำนวณต้นทุนต่อแก้ว กำหนดราคาขาย และดูอัตรากำไรของคุณแบบเรียลไทม์ พร้อมบันทึกลงฐานข้อมูล</p>
+                                <p class="text-muted">คำนวณต้นทุนต่อแก้ว กำหนดราคาขาย และดูอัตรากำไรของคุณแบบเรียลไทม์ สำหรับเจ้าของร้านคาเฟ่</p>
                             </div>
-                            <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border" data-aos="fade-up">
+                            <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border border-light" data-aos="fade-up">
                                 <div class="row g-5">
                                     <div class="col-md-7">
-                                        <h4 class="mb-4 fw-bold"><i class="bi bi-calculator me-2"></i> ป้อนข้อมูลวัตถุดิบ</h4>
+                                        <h4 class="mb-4 fw-bold text-dark"><i class="bi bi-calculator me-2 text-success"></i> ป้อนข้อมูลวัตถุดิบ</h4>
                                         <div class="mb-3">
                                             <label class="form-label text-muted small">ชื่อสูตร / เมนู</label>
-                                            <input type="text" class="form-control form-control-lg bg-light" id="calc-name" placeholder="เช่น มัทฉะลาเต้เย็น 16oz" required>
+                                            <input type="text" class="form-control form-control-lg bg-light border-0" id="calc-name" placeholder="เช่น มัทฉะลาเต้เย็น 16oz" required>
                                         </div>
                                         <div class="row g-3 mb-3">
                                             <div class="col-sm-6">
                                                 <label class="form-label text-muted small">ราคาผงมัทฉะ (บาท/100g)</label>
-                                                <input type="number" class="form-control calc-input bg-light" id="calc-matcha-price" value="590" min="0">
+                                                <input type="number" class="form-control calc-input bg-light border-0" id="calc-matcha-price" value="590" min="0">
                                             </div>
                                             <div class="col-sm-6">
                                                 <label class="form-label text-muted small">ปริมาณที่ใช้ (กรัม)</label>
-                                                <input type="number" class="form-control calc-input bg-light" id="calc-matcha-use" value="5" min="0">
+                                                <input type="number" class="form-control calc-input bg-light border-0" id="calc-matcha-use" value="5" min="0">
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
                                             <div class="col-sm-6">
                                                 <label class="form-label text-muted small">ราคานม (บาท/1000ml)</label>
-                                                <input type="number" class="form-control calc-input bg-light" id="calc-milk-price" value="50" min="0">
+                                                <input type="number" class="form-control calc-input bg-light border-0" id="calc-milk-price" value="50" min="0">
                                             </div>
                                             <div class="col-sm-6">
                                                 <label class="form-label text-muted small">ปริมาณที่ใช้ (ml)</label>
-                                                <input type="number" class="form-control calc-input bg-light" id="calc-milk-use" value="150" min="0">
+                                                <input type="number" class="form-control calc-input bg-light border-0" id="calc-milk-use" value="150" min="0">
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
                                             <div class="col-sm-6">
-                                                <label class="form-label text-muted small">ราคาแพคเกจจิ้ง (บาท/แก้ว)</label>
-                                                <input type="number" class="form-control calc-input bg-light" id="calc-packaging" value="4" min="0">
+                                                <label class="form-label text-muted small">ราคาแก้ว/หลอด/น้ำแข็ง (บาท)</label>
+                                                <input type="number" class="form-control calc-input bg-light border-0" id="calc-packaging" value="4" min="0">
                                             </div>
                                             <div class="col-sm-6">
-                                                <label class="form-label fw-bold text-dark">ราคาขายที่ต้องการ</label>
-                                                <input type="number" class="form-control calc-input border-success" id="calc-sell-price" value="85" min="0">
+                                                <label class="form-label fw-bold" style="color: var(--matcha-dark);">ราคาขายที่ตั้งไว้</label>
+                                                <input type="number" class="form-control calc-input border-success border-2 bg-transparent" id="calc-sell-price" value="85" min="0">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-5">
                                         <div class="sticky-top" style="top: 100px;">
-                                            <div class="p-4 rounded-4 mb-4 text-center" style="background-color: var(--matcha-primary); color: white;">
+                                            <div class="p-4 rounded-4 mb-4 text-center shadow-sm" style="background: linear-gradient(135deg, var(--matcha-primary), var(--matcha-dark)); color: white;">
                                                 <p class="mb-1 opacity-75">ต้นทุนรวมต่อแก้ว</p>
-                                                <h2 class="display-5 fw-bold mb-0">฿<span id="res-total-cost">0.00</span></h2>
+                                                <h2 class="display-4 fw-bold mb-0">฿<span id="res-total-cost">0.00</span></h2>
                                             </div>
-                                            <div class="card border border-light shadow-sm mb-4">
-                                                <div class="card-body">
-                                                    <div class="d-flex justify-content-between mb-2"><span>ราคาขาย</span><span class="fw-bold">฿<span id="res-sell">0.00</span></span></div>
-                                                    <div class="d-flex justify-content-between mb-2 text-success"><span>กำไรต่อแก้ว</span><span class="fw-bold">฿<span id="res-profit">0.00</span></span></div>
-                                                    <div class="d-flex justify-content-between mb-0 text-primary"><span>อัตรากำไร (Margin)</span><span class="fw-bold"><span id="res-margin">0</span>%</span></div>
+                                            <div class="card border-0 shadow-sm mb-4 bg-light">
+                                                <div class="card-body p-4">
+                                                    <div class="d-flex justify-content-between mb-3"><span>ราคาขาย</span><span class="fw-bold fs-5">฿<span id="res-sell">0.00</span></span></div>
+                                                    <div class="d-flex justify-content-between mb-3 text-success border-top pt-3 border-dark-subtle">
+                                                        <span>กำไรต่อแก้ว</span><span class="fw-bold fs-5">฿<span id="res-profit">0.00</span></span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between mb-0" style="color: var(--matcha-dark);">
+                                                        <span>อัตรากำไร (Margin)</span><span class="fw-bold fs-5"><span id="res-margin">0</span>%</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <button class="btn btn-matcha w-100 py-3 d-flex align-items-center justify-content-center" id="btn-save-calc">
+                                            <button class="btn btn-matcha w-100 py-3 d-flex align-items-center justify-content-center shadow-sm" id="btn-save-calc">
                                                 <i class="bi bi-cloud-arrow-up fs-5 me-2"></i> บันทึกลงฐานข้อมูล
                                             </button>
                                         </div>
@@ -223,7 +365,7 @@
                                 </div>
                             </div>
                             <div class="mt-5" data-aos="fade-up">
-                                <h4 class="mb-3">ประวัติการคำนวณ</h4>
+                                <h4 class="mb-4 fw-bold">ประวัติการคำนวณ</h4>
                                 <div class="table-responsive table-custom">
                                     <table class="table table-hover mb-0">
                                         <thead><tr><th>ชื่อเมนู</th><th>ต้นทุน</th><th>ราคาขาย</th><th>กำไร</th><th>Margin</th><th>วันที่</th></tr></thead>
@@ -237,37 +379,41 @@
             </section>
         </div>
 
+        <!-- VIEW: LOGIN -->
         <div id="view-login" class="view-section">
             <section class="py-5 mt-5">
-                <div class="container">
+                <div class="container mt-5">
                     <div class="auth-container text-center" data-aos="zoom-in">
-                        <i class="bi bi-shield-lock-fill text-success" style="font-size: 3rem;"></i>
-                        <h3 class="fw-bold mt-2 mb-4">Admin Login</h3>
+                        <div class="mb-4 d-inline-flex justify-content-center align-items-center bg-light rounded-circle" style="width: 80px; height: 80px;">
+                            <i class="bi bi-shield-lock-fill text-success" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 class="fw-bold mb-4">Admin System</h3>
                         <form id="login-form">
                             <div class="mb-3 text-start">
-                                <label class="form-label text-muted small">Email Address</label>
-                                <input type="email" class="form-control bg-light" id="auth-email" required>
+                                <label class="form-label text-muted small fw-500">อีเมล (Email)</label>
+                                <input type="email" class="form-control form-control-lg bg-light border-0" id="auth-email" required>
                             </div>
                             <div class="mb-4 text-start">
-                                <label class="form-label text-muted small">Password</label>
-                                <input type="password" class="form-control bg-light" id="auth-password" required>
+                                <label class="form-label text-muted small fw-500">รหัสผ่าน (Password)</label>
+                                <input type="password" class="form-control form-control-lg bg-light border-0" id="auth-password" required>
                             </div>
-                            <button type="submit" class="btn btn-matcha w-100 mb-3" id="btn-login-submit">เข้าสู่ระบบ</button>
-                            <a href="#home" class="text-muted small text-decoration-none">กลับหน้าแรก</a>
+                            <button type="submit" class="btn btn-matcha w-100 py-3 mb-3" id="btn-login-submit">เข้าสู่ระบบหลังบ้าน</button>
+                            <a href="#home" class="text-muted small text-decoration-none hover-primary"><i class="bi bi-arrow-left me-1"></i> กลับหน้าแรก</a>
                         </form>
                     </div>
                 </div>
             </section>
         </div>
 
+        <!-- VIEW: ADMIN -->
         <div id="view-admin" class="view-section">
-            <div class="bg-light py-4 border-bottom mt-4">
+            <div class="bg-white py-4 border-bottom mt-5 shadow-sm">
                 <div class="container">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                        <h2 class="mb-0 fw-bold"><i class="bi bi-gear-fill me-2 text-muted"></i>ระบบจัดการหลังบ้าน</h2>
-                        <div>
-                            <span class="badge bg-success me-3"><i class="bi bi-person-check-fill me-1"></i>แอดมินยืนยันตัวตนแล้ว</span>
-                            <button class="btn btn-sm btn-outline-danger" id="btn-logout">ออกจากระบบ</button>
+                        <h2 class="mb-0 fw-bold d-flex align-items-center"><i class="bi bi-gear-fill me-3 fs-3" style="color: var(--matcha-light);"></i>ระบบจัดการหลังบ้าน</h2>
+                        <div class="d-flex align-items-center bg-light px-3 py-2 rounded-pill">
+                            <span class="text-success small fw-500 me-3"><i class="bi bi-person-check-fill me-1"></i>แอดมินยืนยันตัวตนแล้ว</span>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" id="btn-logout">ออกจากระบบ</button>
                         </div>
                     </div>
                 </div>
@@ -275,26 +421,26 @@
 
             <div class="container py-5">
                 <div class="row g-5">
-                    <div class="col-12">
-                        <div class="d-flex justify-content-between align-items-end mb-3">
-                            <h4 class="mb-0">จัดการสินค้า</h4>
-                            <button class="btn btn-sm btn-matcha" onclick="window.openProductModal()"><i class="bi bi-plus-lg"></i> เพิ่มสินค้า</button>
+                    <div class="col-12" data-aos="fade-up">
+                        <div class="d-flex justify-content-between align-items-end mb-4">
+                            <h4 class="mb-0 fw-bold">จัดการสินค้า (Products)</h4>
+                            <button class="btn btn-sm btn-matcha shadow-sm" onclick="window.openProductModal()"><i class="bi bi-plus-lg me-1"></i> เพิ่มสินค้า</button>
                         </div>
                         <div class="table-responsive table-custom">
                             <table class="table table-hover align-middle mb-0">
-                                <thead><tr><th width="200">ชื่อสินค้า</th><th>รายละเอียด</th><th width="100">ราคา</th><th width="150" class="text-end">จัดการ</th></tr></thead>
+                                <thead><tr><th width="250">ชื่อสินค้า</th><th>รายละเอียด</th><th width="120">ราคา</th><th width="120" class="text-center">จัดการ</th></tr></thead>
                                 <tbody id="admin-products-tbody"></tbody>
                             </table>
                         </div>
                     </div>
-                    <div class="col-12 mt-5">
-                        <div class="d-flex justify-content-between align-items-end mb-3">
-                            <h4 class="mb-0">จัดการสูตร</h4>
-                            <button class="btn btn-sm btn-matcha" onclick="window.openRecipeModal()"><i class="bi bi-plus-lg"></i> เพิ่มสูตร</button>
+                    <div class="col-12 mt-5" data-aos="fade-up" data-aos-delay="100">
+                        <div class="d-flex justify-content-between align-items-end mb-4">
+                            <h4 class="mb-0 fw-bold">จัดการสูตร (Recipes)</h4>
+                            <button class="btn btn-sm btn-matcha shadow-sm" onclick="window.openRecipeModal()"><i class="bi bi-plus-lg me-1"></i> เพิ่มสูตร</button>
                         </div>
                         <div class="table-responsive table-custom">
                             <table class="table table-hover align-middle mb-0">
-                                <thead><tr><th width="250">ชื่อสูตร</th><th>ระดับ</th><th width="150" class="text-end">จัดการ</th></tr></thead>
+                                <thead><tr><th width="300">ชื่อสูตร</th><th>ระดับ</th><th width="120" class="text-center">จัดการ</th></tr></thead>
                                 <tbody id="admin-recipes-tbody"></tbody>
                             </table>
                         </div>
@@ -304,55 +450,100 @@
         </div>
     </main>
 
+    <!-- 🌟 FOOTER SECTION -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <h3 class="fw-bold mb-3 d-flex align-items-center text-white"><i class="bi bi-cup-hot-fill me-2" style="color: var(--matcha-light);"></i>Matcha TH</h3>
+                    <p class="text-white-50 small mb-4 pe-lg-4">แพลตฟอร์มจำหน่ายผงมัทฉะเกรดพรีเมียมนำเข้าจากญี่ปุ่น และคลังความรู้สูตรชงระดับคาเฟ่ที่พร้อมให้คุณต่อยอดธุรกิจ</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="fs-5"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="fs-5"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="fs-5"><i class="bi bi-tiktok"></i></a>
+                        <a href="#" class="fs-5"><i class="bi bi-line"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5>เมนูหลัก</h5>
+                    <ul class="list-unstyled d-flex flex-column gap-2 small">
+                        <li><a href="#home">หน้าแรก</a></li>
+                        <li><a href="#recipes">สูตรเครื่องดื่ม</a></li>
+                        <li><a href="#calculator">คำนวณต้นทุน</a></li>
+                        <li><a href="#login">สำหรับแอดมิน</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>บริการลูกค้า</h5>
+                    <ul class="list-unstyled d-flex flex-column gap-2 small">
+                        <li><a href="#">วิธีการสั่งซื้อ</a></li>
+                        <li><a href="#">การจัดส่งสินค้า</a></li>
+                        <li><a href="#">นโยบายการเปลี่ยนคืน</a></li>
+                        <li><a href="#">คำถามที่พบบ่อย (FAQ)</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>เวลาทำการ</h5>
+                    <ul class="list-unstyled small text-white-50 d-flex flex-column gap-2">
+                        <li><i class="bi bi-clock me-2"></i> จันทร์ - ศุกร์ : 09.00 - 18.00 น.</li>
+                        <li><i class="bi bi-clock me-2"></i> เสาร์ - อาทิตย์ : 10.00 - 17.00 น.</li>
+                        <li class="mt-2"><i class="bi bi-envelope me-2"></i> hello@matchath.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="mb-0 text-white-50">&copy; 2026 Matcha Thailand. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
     <!-- Modal สินค้า -->
-    <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content border-0 shadow">
-        <div class="modal-header bg-light border-0"><h5 class="modal-title" id="productModalLabel">จัดการสินค้า</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body">
+    <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-header bg-light border-0 rounded-top-4 p-4"><h5 class="modal-title fw-bold" id="productModalLabel">จัดการสินค้า</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body p-4">
             <input type="hidden" id="prod-id">
-            <div class="mb-3"><label class="form-label">ชื่อ</label><input type="text" class="form-control" id="prod-name" required></div>
-            <div class="mb-3"><label class="form-label">คำอธิบาย</label><textarea class="form-control" id="prod-desc" rows="3" required></textarea></div>
-            <div class="mb-3"><label class="form-label">ราคา (฿)</label><input type="number" class="form-control" id="prod-price" required></div>
+            <div class="mb-3"><label class="form-label text-muted small fw-500">ชื่อสินค้า</label><input type="text" class="form-control bg-light border-0" id="prod-name" required></div>
+            <div class="mb-3"><label class="form-label text-muted small fw-500">คำอธิบาย</label><textarea class="form-control bg-light border-0" id="prod-desc" rows="3" required></textarea></div>
+            <div class="mb-3"><label class="form-label text-muted small fw-500">ราคา (฿)</label><input type="number" class="form-control bg-light border-0" id="prod-price" required></div>
             
-            <!-- เปลี่ยนเป็นอัพโหลดรูปภาพ -->
             <div class="mb-3">
-                <label class="form-label">อัพโหลดรูปภาพ</label>
-                <input type="file" class="form-control" id="prod-image-file" accept="image/*">
-                <input type="hidden" id="prod-image-url"> <!-- ซ่อนไว้เก็บ URL เดิม -->
-                <div id="prod-image-preview-container" class="mt-2 text-center" style="display: none;">
-                    <img id="prod-image-preview-img" src="" alt="preview" class="img-thumbnail" style="max-height: 120px;">
+                <label class="form-label text-muted small fw-500">อัพโหลดรูปภาพ</label>
+                <input type="file" class="form-control bg-light border-0" id="prod-image-file" accept="image/*">
+                <input type="hidden" id="prod-image-url">
+                <div id="prod-image-preview-container" class="mt-3 text-center bg-light p-2 rounded" style="display: none;">
+                    <img id="prod-image-preview-img" src="" alt="preview" class="img-fluid rounded shadow-sm" style="max-height: 150px; object-fit: cover;">
                 </div>
             </div>
 
-            <div class="mb-3"><label class="form-label text-primary"><i class="bi bi-link-45deg"></i> ลิงก์ Affiliate (Shopee/Lazada)</label><input type="url" class="form-control border-primary" id="prod-affiliate"></div>
+            <div class="mb-2"><label class="form-label text-primary small fw-500"><i class="bi bi-link-45deg"></i> ลิงก์ Affiliate (Shopee/Lazada)</label><input type="url" class="form-control border-primary bg-light" id="prod-affiliate"></div>
         </div>
-        <div class="modal-footer border-0">
-            <button class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button>
-            <button class="btn btn-matcha" id="btn-save-product" onclick="window.saveProduct()">บันทึก</button>
+        <div class="modal-footer border-0 p-4 pt-0">
+            <button class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
+            <button class="btn btn-matcha px-4" id="btn-save-product" onclick="window.saveProduct()">บันทึกข้อมูล</button>
         </div>
     </div></div></div>
 
     <!-- Modal สูตร -->
-    <div class="modal fade" id="recipeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content border-0 shadow">
-        <div class="modal-header bg-light border-0"><h5 class="modal-title" id="recipeModalLabel">จัดการสูตร</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body">
+    <div class="modal fade" id="recipeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-header bg-light border-0 rounded-top-4 p-4"><h5 class="modal-title fw-bold" id="recipeModalLabel">จัดการสูตร</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body p-4">
             <input type="hidden" id="rec-id">
-            <div class="mb-3"><label class="form-label">ชื่อสูตร</label><input type="text" class="form-control" id="rec-name" required></div>
-            <div class="mb-3"><label class="form-label">ส่วนผสม</label><input type="text" class="form-control" id="rec-ingredients" required></div>
-            <div class="mb-3"><label class="form-label">ระดับ</label><select class="form-select" id="rec-difficulty"><option>ง่าย</option><option>ปานกลาง</option><option>ยาก</option></select></div>
+            <div class="mb-3"><label class="form-label text-muted small fw-500">ชื่อสูตร</label><input type="text" class="form-control bg-light border-0" id="rec-name" required></div>
+            <div class="mb-3"><label class="form-label text-muted small fw-500">ส่วนผสม (ย่อ)</label><input type="text" class="form-control bg-light border-0" id="rec-ingredients" required placeholder="เช่น ผงมัทฉะ 5g, นมสด 150ml"></div>
+            <div class="mb-3"><label class="form-label text-muted small fw-500">ระดับความยาก</label><select class="form-select bg-light border-0" id="rec-difficulty"><option>ง่าย</option><option>ปานกลาง</option><option>ยาก</option></select></div>
             
-            <!-- เปลี่ยนเป็นอัพโหลดรูปภาพ -->
-            <div class="mb-3">
-                <label class="form-label">อัพโหลดรูปภาพ</label>
-                <input type="file" class="form-control" id="rec-image-file" accept="image/*">
-                <input type="hidden" id="rec-image-url"> <!-- ซ่อนไว้เก็บ URL เดิม -->
-                <div id="rec-image-preview-container" class="mt-2 text-center" style="display: none;">
-                    <img id="rec-image-preview-img" src="" alt="preview" class="img-thumbnail" style="max-height: 120px;">
+            <div class="mb-2">
+                <label class="form-label text-muted small fw-500">อัพโหลดรูปภาพ</label>
+                <input type="file" class="form-control bg-light border-0" id="rec-image-file" accept="image/*">
+                <input type="hidden" id="rec-image-url">
+                <div id="rec-image-preview-container" class="mt-3 text-center bg-light p-2 rounded" style="display: none;">
+                    <img id="rec-image-preview-img" src="" alt="preview" class="img-fluid rounded shadow-sm" style="max-height: 150px; object-fit: cover;">
                 </div>
             </div>
         </div>
-        <div class="modal-footer border-0">
-            <button class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button>
-            <button class="btn btn-matcha" id="btn-save-recipe" onclick="window.saveRecipe()">บันทึก</button>
+        <div class="modal-footer border-0 p-4 pt-0">
+            <button class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
+            <button class="btn btn-matcha px-4" id="btn-save-recipe" onclick="window.saveRecipe()">บันทึกข้อมูล</button>
         </div>
     </div></div></div>
 
@@ -363,7 +554,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // ใช้ฟังก์ชันครอบโค้ดทั้งหมด (IIFE) เพื่อป้องกันตัวแปรชนกับไลบรารีของ Supabase
+        // ใช้ฟังก์ชันครอบโค้ดทั้งหมด (IIFE)
         (function() {
         
         // ==========================================
@@ -372,18 +563,27 @@
         const SUPABASE_URL = 'https://wfjlbgzcuzurmjfwcucr.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmamxiZ3pjdXp1cm1qZndjdWNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNTI3MTAsImV4cCI6MjA5NDYyODcxMH0.rX0JkP-LdXPCF5m8gHiTEcsiPF2mKFLjVPRKQhfhdGs';
         
-        // ประกาศตัวแปร supabaseClient แค่ครั้งเดียวตรงนี้ (เปลี่ยนชื่อเพื่อป้องกันชน 100%)
         let supabaseClient;
         let currentUser = null;
         let productModalInst, recipeModalInst;
 
+        // 🌟 Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('mainNavbar');
+            if (window.scrollY > 30) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
         window.showToast = function(message, type = 'success') {
             const id = 'toast-' + Date.now();
-            const bg = type === 'success' ? 'bg-success' : (type === 'danger' ? 'bg-danger' : 'bg-primary');
-            const html = `<div id="${id}" class="toast align-items-center text-white ${bg} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true"><div class="d-flex"><div class="toast-body">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>`;
+            const bg = type === 'success' ? 'bg-success' : (type === 'danger' ? 'bg-danger' : 'bg-dark');
+            const html = `<div id="${id}" class="toast align-items-center text-white ${bg} border-0 mb-2 shadow-lg rounded-3" role="alert" aria-live="assertive" aria-atomic="true"><div class="d-flex"><div class="toast-body fw-500 px-3 py-3">${message}</div><button type="button" class="btn-close btn-close-white me-3 m-auto" data-bs-dismiss="toast"></button></div></div>`;
             document.getElementById('toastContainer').insertAdjacentHTML('beforeend', html);
             const el = document.getElementById(id);
-            const t = new bootstrap.Toast(el, { delay: 3000 });
+            const t = new bootstrap.Toast(el, { delay: 3500 });
             t.show();
             el.addEventListener('hidden.bs.toast', () => el.remove());
         };
@@ -408,16 +608,16 @@
             const loader = document.getElementById('loading-overlay');
             if(loader) {
                 loader.style.opacity = '0';
-                setTimeout(() => loader.style.display = 'none', 500);
+                setTimeout(() => loader.style.display = 'none', 600);
             }
         }
 
         function updateNavAuth() {
             const container = document.getElementById('nav-auth-section');
             if(currentUser) {
-                container.innerHTML = `<a href="#admin" class="btn btn-sm btn-outline-success"><i class="bi bi-gear-fill me-1"></i>แอดมิน</a>`;
+                container.innerHTML = `<a href="#admin" class="btn btn-sm btn-outline-success rounded-pill px-3"><i class="bi bi-gear-fill me-1"></i>ระบบหลังบ้าน</a>`;
             } else {
-                container.innerHTML = `<a href="#login" class="nav-link small text-muted"><i class="bi bi-lock-fill"></i></a>`;
+                container.innerHTML = `<a href="#login" class="nav-link small text-muted"><i class="bi bi-shield-lock-fill fs-5"></i></a>`;
             }
         }
 
@@ -437,15 +637,22 @@
             const activeLink = document.querySelector(`.nav-link[href="${hash}"]`);
             if(activeLink) activeLink.classList.add('active', 'fw-bold');
 
+            // ปิดเมนูมือถือเวลาคลิก
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            if (navbarCollapse.classList.contains('show')) {
+                navbarToggler.click();
+            }
+
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             const view = document.getElementById('view-' + hash.replace('#', ''));
             
             if(view) {
                 view.classList.add('active');
-                window.scrollTo(0,0);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 if(hash === '#home' || hash === '#recipes') renderPublicViews();
                 if(hash === '#admin') renderAdminViews();
-                AOS.refresh();
+                setTimeout(() => AOS.refresh(), 100);
             } else {
                 document.getElementById('view-home').classList.add('active');
                 window.location.hash = '#home';
@@ -457,7 +664,7 @@
             if(!supabaseClient) return alert("ยังไม่ได้ตั้งค่า Supabase Key");
             
             const btn = document.getElementById('btn-login-submit');
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> กำลังเข้าสู่ระบบ...';
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> กำลังตรวจสอบ...';
             btn.disabled = true;
 
             const email = document.getElementById('auth-email').value;
@@ -465,14 +672,14 @@
 
             const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
             
-            btn.innerHTML = 'เข้าสู่ระบบ';
+            btn.innerHTML = 'เข้าสู่ระบบหลังบ้าน';
             btn.disabled = false;
 
             if(error) {
                 window.showToast('อีเมลหรือรหัสผ่านไม่ถูกต้อง', 'danger');
             } else {
                 currentUser = data.user;
-                window.showToast('เข้าสู่ระบบสำเร็จ', 'success');
+                window.showToast('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับครับ', 'success');
                 window.location.hash = '#admin';
                 updateNavAuth();
             }
@@ -494,7 +701,6 @@
         }
 
         const API = {
-            // ระบบจัดการไฟล์อัพโหลด (อัพขึ้น Supabase Storage บัคเก็ตชื่อ 'images')
             uploadImage: async (file) => {
                 if(!supabaseClient) return null;
                 const fileExt = file.name.split('.').pop();
@@ -502,27 +708,19 @@
                 const filePath = `public/${fileName}`;
 
                 const { error } = await supabaseClient.storage.from('images').upload(filePath, file);
+                if (error) throw error;
                 
-                if (error) {
-                    console.error("Upload error:", error);
-                    throw error;
-                }
-                
-                // ดึง Public URL ของไฟล์ที่เพิ่งอัพโหลดเสร็จ
                 const { data } = supabaseClient.storage.from('images').getPublicUrl(filePath);
                 return data.publicUrl;
             },
-
             getProducts: async () => {
                 if(!supabaseClient) return [];
                 const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: true });
-                if(error) console.error(error);
                 return data || [];
             },
             addProduct: async (d) => { await supabaseClient.from('products').insert([d]); },
             updateProduct: async (id, d) => { await supabaseClient.from('products').update(d).eq('id', id); },
             deleteProduct: async (id) => { await supabaseClient.from('products').delete().eq('id', id); },
-            
             getRecipes: async () => {
                 if(!supabaseClient) return [];
                 const { data, error } = await supabaseClient.from('recipes').select('*').order('created_at', { ascending: true });
@@ -531,7 +729,6 @@
             addRecipe: async (d) => { await supabaseClient.from('recipes').insert([d]); },
             updateRecipe: async (id, d) => { await supabaseClient.from('recipes').update(d).eq('id', id); },
             deleteRecipe: async (id) => { await supabaseClient.from('recipes').delete().eq('id', id); },
-
             addCalculation: async (d) => {
                 d.created_at_str = new Date().toLocaleDateString('th-TH') + ' ' + new Date().toLocaleTimeString('th-TH');
                 await supabaseClient.from('calculations').insert([d]);
@@ -542,17 +739,17 @@
             const products = await API.getProducts();
             const recipes = await API.getRecipes();
 
-            document.getElementById('home-products-container').innerHTML = products.slice(0,3).map(p => `
-                <div class="col-md-4" data-aos="fade-up">
+            document.getElementById('home-products-container').innerHTML = products.slice(0,3).map((p, i) => `
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="${i*100}">
                     <a href="${p.affiliate_url || '#'}" target="${p.affiliate_url ? '_blank' : '_self'}" class="product-card-link">
                         <div class="matcha-card card">
                             <div class="card-img-placeholder" style="background-image: url('${p.image_url}')"></div>
                             <div class="card-body p-4 d-flex flex-column">
-                                <h5 class="fw-bold">${p.name}</h5>
-                                <p class="text-muted small mb-3 flex-grow-1">${p.description}</p>
-                                <div class="d-flex justify-content-between align-items-center mt-auto">
-                                    <span class="fw-bold fs-5 text-dark">฿${p.price}</span>
-                                    <span class="btn btn-sm btn-matcha"><i class="bi bi-cart3 me-1"></i> สั่งซื้อ</span>
+                                <h5 class="fw-bold text-dark">${p.name}</h5>
+                                <p class="text-muted small mb-4 flex-grow-1 line-clamp-2">${p.description}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top border-light">
+                                    <span class="fw-bold fs-5" style="color: var(--matcha-dark);">฿${p.price}</span>
+                                    <span class="btn btn-sm btn-matcha rounded-pill px-3"><i class="bi bi-cart3 me-1"></i> สั่งซื้อเลย</span>
                                 </div>
                             </div>
                         </div>
@@ -560,18 +757,18 @@
                 </div>
             `).join('') || '<p class="text-center text-muted">ยังไม่มีข้อมูลสินค้า</p>';
 
-            const tplRecipe = (r) => `
-                <div class="col-md-4 col-sm-6" data-aos="fade-up">
-                    <div class="matcha-card recipe-card card border-0 bg-transparent">
+            const tplRecipe = (r, i) => `
+                <div class="col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="${i*100}">
+                    <div class="matcha-card recipe-card card border-0 bg-transparent p-2">
                         <div class="card-img-placeholder rounded-4 mb-3 shadow-sm" style="background-image: url('${r.image_url}')"></div>
-                        <h5 class="fw-bold px-2">${r.title}</h5>
-                        <p class="text-muted small px-2 mb-2"><i class="bi bi-list-check me-1"></i> ${r.ingredients_summary}</p>
-                        <span class="badge bg-light text-dark border mx-2 mb-3 align-self-start">ระดับ: ${r.difficulty}</span>
+                        <h5 class="fw-bold px-2 text-dark">${r.title}</h5>
+                        <p class="text-muted small px-2 mb-3"><i class="bi bi-list-check me-1"></i> ${r.ingredients_summary}</p>
+                        <span class="badge bg-white text-dark border mx-2 mb-2 align-self-start shadow-sm px-3 py-2 rounded-pill"><i class="bi bi-bar-chart-fill me-1 text-success"></i> ระดับ: ${r.difficulty}</span>
                     </div>
                 </div>`;
             
-            document.getElementById('home-recipes-container').innerHTML = recipes.slice(0,3).map(tplRecipe).join('');
-            document.getElementById('all-recipes-container').innerHTML = recipes.map(tplRecipe).join('');
+            document.getElementById('home-recipes-container').innerHTML = recipes.slice(0,3).map((r,i) => tplRecipe(r,i)).join('');
+            document.getElementById('all-recipes-container').innerHTML = recipes.map((r,i) => tplRecipe(r,i%3)).join('');
         }
 
         async function renderAdminViews() {
@@ -582,30 +779,36 @@
 
             document.getElementById('admin-products-tbody').innerHTML = products.map(p => `
                 <tr>
-                    <td class="fw-bold">
-                        <img src="${p.image_url}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 8px;">
-                        ${p.name}<br>
-                        ${p.affiliate_url ? `<a href="${p.affiliate_url}" target="_blank" class="badge bg-primary text-decoration-none mt-1"><i class="bi bi-link"></i> ลิงก์</a>` : ''}
+                    <td class="fw-bold text-dark">
+                        <div class="d-flex align-items-center">
+                            <img src="${p.image_url}" class="rounded shadow-sm me-3" style="width: 48px; height: 48px; object-fit: cover;">
+                            <div>
+                                ${p.name}<br>
+                                ${p.affiliate_url ? `<a href="${p.affiliate_url}" target="_blank" class="badge bg-primary text-decoration-none mt-1 fw-normal"><i class="bi bi-link"></i> ลิงก์ร้านค้า</a>` : ''}
+                            </div>
+                        </div>
                     </td>
                     <td class="text-muted small">${p.description}</td>
-                    <td>฿${p.price}</td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-light text-primary me-1" onclick='window.editProduct(${JSON.stringify(p).replace(/'/g, "&apos;")})'><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-light text-danger" onclick='window.deleteProduct("${p.id}")'><i class="bi bi-trash"></i></button>
+                    <td class="fw-500">฿${p.price}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-light border text-primary me-1 rounded-circle" onclick='window.editProduct(${JSON.stringify(p).replace(/'/g, "&apos;")})' title="แก้ไข"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-light border text-danger rounded-circle" onclick='if(confirm("ยืนยันการลบสินค้าชิ้นนี้?")) window.deleteProduct("${p.id}")' title="ลบ"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
 
             document.getElementById('admin-recipes-tbody').innerHTML = recipes.map(r => `
                 <tr>
-                    <td class="fw-bold">
-                        <img src="${r.image_url}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 8px;">
-                        ${r.title}
+                    <td class="fw-bold text-dark">
+                        <div class="d-flex align-items-center">
+                            <img src="${r.image_url}" class="rounded shadow-sm me-3" style="width: 48px; height: 48px; object-fit: cover;">
+                            ${r.title}
+                        </div>
                     </td>
-                    <td><span class="badge bg-light text-dark border">${r.difficulty}</span></td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-light text-primary me-1" onclick='window.editRecipe(${JSON.stringify(r).replace(/'/g, "&apos;")})'><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-light text-danger" onclick='window.deleteRecipe("${r.id}")'><i class="bi bi-trash"></i></button>
+                    <td><span class="badge bg-light text-dark border px-2 py-1">${r.difficulty}</span></td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-light border text-primary me-1 rounded-circle" onclick='window.editRecipe(${JSON.stringify(r).replace(/'/g, "&apos;")})' title="แก้ไข"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-light border text-danger rounded-circle" onclick='if(confirm("ยืนยันการลบสูตรนี้?")) window.deleteRecipe("${r.id}")' title="ลบ"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -619,13 +822,19 @@
                 if(!name) return window.showToast('กรุณากรอกชื่อเมนูก่อนบันทึก', 'danger');
                 if(!supabaseClient) return window.showToast('ไม่ได้เชื่อมต่อฐานข้อมูล', 'danger');
 
+                const btn = document.getElementById('btn-save-calc');
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> กำลังบันทึก...';
+                
                 await API.addCalculation({
                     menu_name: name, total_cost: parseFloat(document.getElementById('res-total-cost').innerText),
                     sell_price: parseFloat(document.getElementById('res-sell').innerText),
                     profit: parseFloat(document.getElementById('res-profit').innerText),
                     margin_percent: parseFloat(document.getElementById('res-margin').innerText)
                 });
-                window.showToast('บันทึกสำเร็จ'); document.getElementById('calc-name').value = '';
+                
+                btn.innerHTML = '<i class="bi bi-cloud-arrow-up fs-5 me-2"></i> บันทึกลงฐานข้อมูล';
+                window.showToast('บันทึกประวัติการคำนวณเรียบร้อย'); 
+                document.getElementById('calc-name').value = '';
             });
 
             calculateCost();
@@ -634,8 +843,8 @@
                 const fetchCalcs = async () => {
                     const {data} = await supabaseClient.from('calculations').select('*').order('created_at', {ascending: false});
                     const tb = document.getElementById('saved-calcs-tbody');
-                    if(!data || data.length === 0) tb.innerHTML = '<tr><td colspan="6" class="text-center text-muted">ยังไม่มีข้อมูล</td></tr>';
-                    else tb.innerHTML = data.map(c => `<tr><td class="fw-bold">${c.menu_name}</td><td>฿${c.total_cost.toFixed(2)}</td><td>฿${c.sell_price.toFixed(2)}</td><td class="${c.profit<0?'text-danger':'text-success'} fw-bold">฿${c.profit.toFixed(2)}</td><td>${c.margin_percent.toFixed(1)}%</td><td class="text-muted small">${c.created_at_str}</td></tr>`).join('');
+                    if(!data || data.length === 0) tb.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">ยังไม่มีประวัติการคำนวณ</td></tr>';
+                    else tb.innerHTML = data.map(c => `<tr><td class="fw-bold">${c.menu_name}</td><td>฿${c.total_cost.toFixed(2)}</td><td>฿${c.sell_price.toFixed(2)}</td><td class="${c.profit<0?'text-danger':'text-success'} fw-bold">฿${c.profit.toFixed(2)}</td><td><span class="badge ${c.margin_percent>30?'bg-success':'bg-warning text-dark'}">${c.margin_percent.toFixed(1)}%</span></td><td class="text-muted small">${c.created_at_str}</td></tr>`).join('');
                 };
                 fetchCalcs();
                 supabaseClient.channel('public:calculations').on('postgres_changes', {event:'*', schema:'public', table:'calculations'}, fetchCalcs).subscribe();
@@ -651,10 +860,9 @@
             document.getElementById('res-sell').innerText = sell.toFixed(2);
             document.getElementById('res-profit').innerText = profit.toFixed(2);
             document.getElementById('res-margin').innerText = margin.toFixed(1);
-            document.getElementById('res-profit').parentElement.className = profit < 0 ? 'd-flex justify-content-between mb-2 text-danger' : 'd-flex justify-content-between mb-2 text-success';
+            document.getElementById('res-profit').parentElement.className = profit < 0 ? 'd-flex justify-content-between mb-3 text-danger border-top pt-3 border-dark-subtle' : 'd-flex justify-content-between mb-3 text-success border-top pt-3 border-dark-subtle';
         }
 
-        // --- ระบบ Preview รูปภาพตอนเลือกไฟล์ ---
         function handleImagePreview(inputId, previewImgId, previewContainerId) {
             document.getElementById(inputId).addEventListener('change', function(e) {
                 if(e.target.files && e.target.files[0]) {
@@ -672,7 +880,6 @@
         handleImagePreview('prod-image-file', 'prod-image-preview-img', 'prod-image-preview-container');
         handleImagePreview('rec-image-file', 'rec-image-preview-img', 'rec-image-preview-container');
 
-        // --- จัดการหน้าต่าง Modal (สินค้า) ---
         window.openProductModal = () => { 
             document.getElementById('prod-id').value=''; 
             document.getElementById('prod-name').value=''; 
@@ -682,7 +889,7 @@
             document.getElementById('prod-image-url').value = '';
             document.getElementById('prod-image-preview-container').style.display = 'none';
             document.getElementById('prod-affiliate').value=''; 
-            document.getElementById('productModalLabel').innerText='เพิ่มสินค้า'; 
+            document.getElementById('productModalLabel').innerText='เพิ่มสินค้าใหม่'; 
             productModalInst.show(); 
         };
         
@@ -702,58 +909,48 @@
             }
             
             document.getElementById('prod-affiliate').value=p.affiliate_url||''; 
-            document.getElementById('productModalLabel').innerText='แก้ไขสินค้า'; 
+            document.getElementById('productModalLabel').innerText='แก้ไขข้อมูลสินค้า'; 
             productModalInst.show(); 
         };
         
         window.saveProduct = async () => {
             const name = document.getElementById('prod-name').value;
             const price = parseFloat(document.getElementById('prod-price').value);
-            if(!name || isNaN(price)) return window.showToast('กรอกข้อมูลไม่ครบ', 'danger');
+            if(!name || isNaN(price)) return window.showToast('กรอกข้อมูลไม่ครบถ้วน', 'danger');
 
             const btn = document.getElementById('btn-save-product');
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> กำลังอัพโหลด...';
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> กำลังอัพโหลด...';
 
             try {
                 let imageUrl = document.getElementById('prod-image-url').value;
                 const fileInput = document.getElementById('prod-image-file');
                 
-                // ถ้ามีการเลือกไฟล์ใหม่ ให้ทำการอัพโหลด
                 if (fileInput.files.length > 0) {
                     imageUrl = await API.uploadImage(fileInput.files[0]);
                 }
 
-                // ถ้าไม่มีรูป ให้ใช้รูป Placeholder ชั่วคราว
                 if (!imageUrl) {
                     imageUrl = `https://placehold.co/400x300/78866B/FFF?text=${encodeURIComponent(name)}`;
                 }
 
-                const data = { 
-                    name: name, 
-                    description: document.getElementById('prod-desc').value, 
-                    price: price, 
-                    image_url: imageUrl, 
-                    affiliate_url: document.getElementById('prod-affiliate').value 
-                };
-
+                const data = { name, description: document.getElementById('prod-desc').value, price, image_url: imageUrl, affiliate_url: document.getElementById('prod-affiliate').value };
                 const id = document.getElementById('prod-id').value;
-                if(id) { await API.updateProduct(id, data); window.showToast('อัพเดทเรียบร้อย'); } 
-                else { await API.addProduct(data); window.showToast('เพิ่มเรียบร้อย'); }
+                if(id) { await API.updateProduct(id, data); window.showToast('อัพเดทข้อมูลเรียบร้อย'); } 
+                else { await API.addProduct(data); window.showToast('เพิ่มสินค้าเรียบร้อย'); }
                 
                 productModalInst.hide(); renderAdminViews(); renderPublicViews();
             } catch(e) {
-                window.showToast('เกิดข้อผิดพลาดในการอัพโหลดรูปภาพ กรุณาตรวจสอบ Bucket', 'danger');
+                window.showToast('เกิดข้อผิดพลาดในการอัพโหลดรูปภาพ', 'danger');
                 console.error(e);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = 'บันทึก';
+                btn.innerHTML = 'บันทึกข้อมูล';
             }
         };
 
-        window.deleteProduct = async (id) => { await API.deleteProduct(id); window.showToast('ลบเรียบร้อย'); renderAdminViews(); renderPublicViews(); };
+        window.deleteProduct = async (id) => { await API.deleteProduct(id); window.showToast('ลบสินค้าเรียบร้อย'); renderAdminViews(); renderPublicViews(); };
 
-        // --- จัดการหน้าต่าง Modal (สูตร) ---
         window.openRecipeModal = () => { 
             document.getElementById('rec-id').value=''; 
             document.getElementById('rec-name').value=''; 
@@ -762,7 +959,7 @@
             document.getElementById('rec-image-file').value=''; 
             document.getElementById('rec-image-url').value = '';
             document.getElementById('rec-image-preview-container').style.display = 'none';
-            document.getElementById('recipeModalLabel').innerText='เพิ่มสูตร'; 
+            document.getElementById('recipeModalLabel').innerText='เพิ่มสูตรใหม่'; 
             recipeModalInst.show(); 
         };
         
@@ -788,11 +985,11 @@
         window.saveRecipe = async () => {
             const title = document.getElementById('rec-name').value;
             const ingredients = document.getElementById('rec-ingredients').value;
-            if(!title || !ingredients) return window.showToast('กรอกข้อมูลไม่ครบ', 'danger');
+            if(!title || !ingredients) return window.showToast('กรอกข้อมูลไม่ครบถ้วน', 'danger');
 
             const btn = document.getElementById('btn-save-recipe');
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> กำลังอัพโหลด...';
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> กำลังอัพโหลด...';
 
             try {
                 let imageUrl = document.getElementById('rec-image-url').value;
@@ -806,28 +1003,22 @@
                     imageUrl = `https://placehold.co/400x300/FDFBF7/78866B?text=${encodeURIComponent(title)}`;
                 }
 
-                const data = { 
-                    title: title, 
-                    ingredients_summary: ingredients, 
-                    difficulty: document.getElementById('rec-difficulty').value, 
-                    image_url: imageUrl 
-                };
-
+                const data = { title, ingredients_summary: ingredients, difficulty: document.getElementById('rec-difficulty').value, image_url: imageUrl };
                 const id = document.getElementById('rec-id').value;
-                if(id) { await API.updateRecipe(id, data); window.showToast('อัพเดทเรียบร้อย'); } 
-                else { await API.addRecipe(data); window.showToast('เพิ่มเรียบร้อย'); }
+                if(id) { await API.updateRecipe(id, data); window.showToast('อัพเดทสูตรเรียบร้อย'); } 
+                else { await API.addRecipe(data); window.showToast('เพิ่มสูตรเรียบร้อย'); }
                 
                 recipeModalInst.hide(); renderAdminViews(); renderPublicViews();
             } catch(e) {
-                window.showToast('เกิดข้อผิดพลาดในการอัพโหลดรูปภาพ กรุณาตรวจสอบ Bucket', 'danger');
+                window.showToast('เกิดข้อผิดพลาดในการอัพโหลดรูปภาพ', 'danger');
                 console.error(e);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = 'บันทึก';
+                btn.innerHTML = 'บันทึกข้อมูล';
             }
         };
 
-        window.deleteRecipe = async (id) => { await API.deleteRecipe(id); window.showToast('ลบเรียบร้อย'); renderAdminViews(); renderPublicViews(); };
+        window.deleteRecipe = async (id) => { await API.deleteRecipe(id); window.showToast('ลบสูตรเรียบร้อย'); renderAdminViews(); renderPublicViews(); };
 
         window.addEventListener('hashchange', handleRoute);
         document.addEventListener('DOMContentLoaded', () => {
@@ -838,7 +1029,7 @@
             checkSessionAndRoute();
         });
         
-        })(); // จบฟังก์ชันครอบ (ป้องกันตัวแปรชนกัน)
+        })();
     </script>
 </body>
 </html>
