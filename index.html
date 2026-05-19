@@ -336,14 +336,17 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
+        // ใช้ฟังก์ชันครอบโค้ดทั้งหมด (IIFE) เพื่อป้องกันตัวแปรชนกับไลบรารีของ Supabase
+        (function() {
+        
         // ==========================================
         // ⚠️ กรอกค่าจากโปรเจกต์ SUPABASE ของคุณที่นี่ ⚠️
         // ==========================================
         const SUPABASE_URL = 'https://wfjlbgzcuzurmjfwcucr.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmamxiZ3pjdXp1cm1qZndjdWNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNTI3MTAsImV4cCI6MjA5NDYyODcxMH0.rX0JkP-LdXPCF5m8gHiTEcsiPF2mKFLjVPRKQhfhdGs';
         
-        // ประกาศตัวแปร supabase แค่ครั้งเดียวตรงนี้
-        let supabase;
+        // ประกาศตัวแปร supabaseClient แค่ครั้งเดียวตรงนี้ (เปลี่ยนชื่อเพื่อป้องกันชน 100%)
+        let supabaseClient;
         let currentUser = null;
         let productModalInst, recipeModalInst;
 
@@ -362,15 +365,15 @@
             if(SUPABASE_URL === 'YOUR_SUPABASE_URL') {
                 console.warn("⚠️ แจ้งเตือน: ยังไม่ได้ใส่ Supabase URL & Key ข้อมูลจะไม่สามารถดึงได้");
             }
-            // เรียกใช้ตัวแปร supabase ที่ประกาศไว้ด้านบน ห้ามมีคำว่า let หรือ const
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            // เรียกใช้ตัวแปร supabaseClient ที่ประกาศไว้ด้านบน
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         } catch(e) {
             console.error("Supabase Init Error", e);
         }
 
         async function checkSessionAndRoute() {
-            if(supabase) {
-                const { data: { session } } = await supabase.auth.getSession();
+            if(supabaseClient) {
+                const { data: { session } } = await supabaseClient.auth.getSession();
                 currentUser = session?.user || null;
             }
             updateNavAuth();
@@ -425,7 +428,7 @@
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(!supabase) return alert("ยังไม่ได้ตั้งค่า Supabase Key");
+            if(!supabaseClient) return alert("ยังไม่ได้ตั้งค่า Supabase Key");
             
             const btn = document.getElementById('btn-login-submit');
             btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> กำลังเข้าสู่ระบบ...';
@@ -434,7 +437,7 @@
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
 
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
             
             btn.innerHTML = 'เข้าสู่ระบบ';
             btn.disabled = false;
@@ -450,15 +453,15 @@
         });
 
         document.getElementById('btn-logout').addEventListener('click', async () => {
-            if(supabase) await supabase.auth.signOut();
+            if(supabaseClient) await supabaseClient.auth.signOut();
             currentUser = null;
             window.showToast('ออกจากระบบเรียบร้อย');
             window.location.hash = '#home';
             updateNavAuth();
         });
 
-        if(supabase) {
-            supabase.auth.onAuthStateChange((event, session) => {
+        if(supabaseClient) {
+            supabaseClient.auth.onAuthStateChange((event, session) => {
                 currentUser = session?.user || null;
                 updateNavAuth();
             });
@@ -466,27 +469,27 @@
 
         const API = {
             getProducts: async () => {
-                if(!supabase) return [];
-                const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: true });
+                if(!supabaseClient) return [];
+                const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: true });
                 if(error) console.error(error);
                 return data || [];
             },
-            addProduct: async (d) => { await supabase.from('products').insert([d]); },
-            updateProduct: async (id, d) => { await supabase.from('products').update(d).eq('id', id); },
-            deleteProduct: async (id) => { await supabase.from('products').delete().eq('id', id); },
+            addProduct: async (d) => { await supabaseClient.from('products').insert([d]); },
+            updateProduct: async (id, d) => { await supabaseClient.from('products').update(d).eq('id', id); },
+            deleteProduct: async (id) => { await supabaseClient.from('products').delete().eq('id', id); },
             
             getRecipes: async () => {
-                if(!supabase) return [];
-                const { data, error } = await supabase.from('recipes').select('*').order('created_at', { ascending: true });
+                if(!supabaseClient) return [];
+                const { data, error } = await supabaseClient.from('recipes').select('*').order('created_at', { ascending: true });
                 return data || [];
             },
-            addRecipe: async (d) => { await supabase.from('recipes').insert([d]); },
-            updateRecipe: async (id, d) => { await supabase.from('recipes').update(d).eq('id', id); },
-            deleteRecipe: async (id) => { await supabase.from('recipes').delete().eq('id', id); },
+            addRecipe: async (d) => { await supabaseClient.from('recipes').insert([d]); },
+            updateRecipe: async (id, d) => { await supabaseClient.from('recipes').update(d).eq('id', id); },
+            deleteRecipe: async (id) => { await supabaseClient.from('recipes').delete().eq('id', id); },
 
             addCalculation: async (d) => {
                 d.created_at_str = new Date().toLocaleDateString('th-TH') + ' ' + new Date().toLocaleTimeString('th-TH');
-                await supabase.from('calculations').insert([d]);
+                await supabaseClient.from('calculations').insert([d]);
             }
         };
 
@@ -562,7 +565,7 @@
             document.getElementById('btn-save-calc').addEventListener('click', async () => {
                 const name = document.getElementById('calc-name').value.trim();
                 if(!name) return window.showToast('กรุณากรอกชื่อเมนูก่อนบันทึก', 'danger');
-                if(!supabase) return window.showToast('ไม่ได้เชื่อมต่อฐานข้อมูล', 'danger');
+                if(!supabaseClient) return window.showToast('ไม่ได้เชื่อมต่อฐานข้อมูล', 'danger');
 
                 await API.addCalculation({
                     menu_name: name, total_cost: parseFloat(document.getElementById('res-total-cost').innerText),
@@ -575,15 +578,15 @@
 
             calculateCost();
             
-            if(supabase) {
+            if(supabaseClient) {
                 const fetchCalcs = async () => {
-                    const {data} = await supabase.from('calculations').select('*').order('created_at', {ascending: false});
+                    const {data} = await supabaseClient.from('calculations').select('*').order('created_at', {ascending: false});
                     const tb = document.getElementById('saved-calcs-tbody');
                     if(!data || data.length === 0) tb.innerHTML = '<tr><td colspan="6" class="text-center text-muted">ยังไม่มีข้อมูล</td></tr>';
                     else tb.innerHTML = data.map(c => `<tr><td class="fw-bold">${c.menu_name}</td><td>฿${c.total_cost.toFixed(2)}</td><td>฿${c.sell_price.toFixed(2)}</td><td class="${c.profit<0?'text-danger':'text-success'} fw-bold">฿${c.profit.toFixed(2)}</td><td>${c.margin_percent.toFixed(1)}%</td><td class="text-muted small">${c.created_at_str}</td></tr>`).join('');
                 };
                 fetchCalcs();
-                supabase.channel('public:calculations').on('postgres_changes', {event:'*', schema:'public', table:'calculations'}, fetchCalcs).subscribe();
+                supabaseClient.channel('public:calculations').on('postgres_changes', {event:'*', schema:'public', table:'calculations'}, fetchCalcs).subscribe();
             }
         }
 
@@ -629,6 +632,8 @@
             initCalculator();
             checkSessionAndRoute();
         });
+        
+        })(); // จบฟังก์ชันครอบ (ป้องกันตัวแปรชนกัน)
     </script>
 </body>
 </html>
