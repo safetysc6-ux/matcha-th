@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matcha Thailand | Premium Japanese Matcha</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --matcha-primary: #78866B;
+            --matcha-dark: #5A6650;
+            --matcha-light: #A3B19B;
+            --bg-base: #FDFBF7;
+            --text-main: #2C2C2C;
+            --text-muted: #737373;
+            --accent-wood: #D4C3A3;
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.03);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.06);
+            --radius-md: 12px;
+            --radius-lg: 24px;
+        }
+
+        body {
+            font-family: 'Prompt', 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navbar & Typography */
+        h1, h2, h3, h4, h5, h6 { font-weight: 500; letter-spacing: -0.02em; }
+        .navbar {
+            background-color: rgba(253, 251, 247, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1rem 0;
+        }
+        .navbar-brand { font-weight: 600; color: var(--matcha-primary) !important; font-size: 1.5rem; letter-spacing: 0.05em; }
+        .nav-link { color: var(--text-main) !important; font-weight: 400; transition: color 0.3s ease; margin: 0 0.5rem; }
+        .nav-link:hover, .nav-link.active { color: var(--matcha-primary) !important; }
+
+        /* Buttons & Cards */
+        .btn-matcha { background-color: var(--matcha-primary); color: white; border: none; border-radius: 50px; padding: 0.6rem 1.5rem; font-weight: 500; transition: all 0.3s ease; }
+        .btn-matcha:hover { background-color: var(--matcha-dark); color: white; transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+        .btn-outline-matcha { background-color: transparent; color: var(--matcha-primary); border: 1px solid var(--matcha-primary); border-radius: 50px; padding: 0.6rem 1.5rem; font-weight: 500; transition: all 0.3s ease; }
+        .btn-outline-matcha:hover { background-color: var(--matcha-primary); color: white; }
+        
+        .matcha-card {
+            background: white; border-radius: var(--radius-md); border: none; box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%; display: flex; flex-direction: column; overflow: hidden;
+        }
+        .product-card-link { text-decoration: none !important; color: inherit !important; display: block; height: 100%; }
+        .product-card-link:hover .matcha-card, .recipe-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+        .card-img-placeholder { height: 200px; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; background-color: #eee; }
+
+        /* Sections & Layout */
+        .hero-section { padding: 8rem 0 5rem; text-align: center; }
+        .hero-title { font-size: 3.5rem; font-weight: 600; color: var(--matcha-dark); margin-bottom: 1.5rem; }
+        .hero-subtitle { font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 2.5rem; }
+        .section-title { text-align: center; font-size: 2rem; margin-bottom: 3rem; position: relative; padding-bottom: 1rem; }
+        .section-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 3px; background-color: var(--matcha-light); border-radius: 3px; }
+        
+        /* Routing & Auth UI */
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .auth-container { max-width: 400px; margin: 0 auto; background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
+        
+        /* Loading & Utilities */
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-base); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.5s ease; }
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1055; }
+        
+        /* Table Custom */
+        .table-custom { background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+        .table-custom th { background-color: #F8F9FA; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid #E5E5E5; }
+        .table-custom td { vertical-align: middle; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home">
+                <i class="bi bi-cup-hot-fill me-2"></i>Matcha TH
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="bi bi-list fs-2 text-dark"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="#home">หน้าแรก</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#recipes">สูตรเครื่องดื่ม</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#calculator">คำนวณต้นทุน</a></li>
+                </ul>
+                <div class="d-flex align-items-center" id="nav-auth-section">
+                    <!-- Auth button will be injected here via JS -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="loading-overlay">
+        <div class="spinner-border text-success mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+        <h5 class="text-muted">กำลังโหลดระบบ...</h5>
+    </div>
+
+    <main id="app-container" style="min-height: 80vh; padding-top: 60px;">
+
+        <!-- VIEW: HOME -->
+        <div id="view-home" class="view-section active">
+            <section class="hero-section">
+                <div class="container" data-aos="fade-up">
+                    <h1 class="hero-title">ศิลปะแห่งมัทฉะแท้จากญี่ปุ่น</h1>
+                    <p class="hero-subtitle">ค้นพบผงมัทฉะเกรดพรีเมียมจากแหล่งปลูกที่ดีที่สุด พร้อมสูตรชงระดับคาเฟ่ที่คุณทำเองได้ง่ายๆ และเครื่องมือคำนวณต้นทุนสำหรับผู้ประกอบการ</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="#recipes" class="btn btn-matcha">ดูสูตรชงทั้งหมด</a>
+                        <a href="#calculator" class="btn btn-outline-matcha">เริ่มคำนวณต้นทุน</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-5 bg-white">
+                <div class="container">
+                    <h2 class="section-title" data-aos="fade-up">มัทฉะแนะนำ</h2>
+                    <div class="row g-4" id="home-products-container"></div>
+                </div>
+            </section>
+
+            <section class="py-5">
+                <div class="container">
+                    <h2 class="section-title" data-aos="fade-up">สูตรยอดนิยม</h2>
+                    <div class="row g-4" id="home-recipes-container"></div>
+                    <div class="text-center mt-5">
+                        <a href="#recipes" class="btn btn-outline-matcha">ดูสูตรทั้งหมด <i class="bi bi-arrow-right ms-2"></i></a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- VIEW: RECIPES -->
+        <div id="view-recipes" class="view-section">
+            <section class="py-5 mt-4">
+                <div class="container">
+                    <div class="text-center mb-5" data-aos="fade-in">
+                        <h1 class="fw-bold text-dark mb-3">คลังสูตรเครื่องดื่มมัทฉะ</h1>
+                        <p class="text-muted mx-auto" style="max-width: 600px;">ยกระดับเมนูในร้านของคุณด้วยสูตรชงมาตรฐานคาเฟ่ที่ผ่านการทดสอบมาแล้ว</p>
+                    </div>
+                    <div class="row g-4" id="all-recipes-container"></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- VIEW: CALCULATOR -->
+        <div id="view-calculator" class="view-section">
+            <section class="py-5 mt-4">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10">
+                            <div class="text-center mb-5" data-aos="fade-up">
+                                <h1 class="fw-bold text-dark mb-3">เครื่องมือคำนวณต้นทุน</h1>
+                                <p class="text-muted">คำนวณต้นทุนต่อแก้ว กำหนดราคาขาย และดูอัตรากำไรของคุณแบบเรียลไทม์ พร้อมบันทึกลงฐานข้อมูล</p>
+                            </div>
+                            <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border" data-aos="fade-up">
+                                <div class="row g-5">
+                                    <div class="col-md-7">
+                                        <h4 class="mb-4 fw-bold"><i class="bi bi-calculator me-2"></i> ป้อนข้อมูลวัตถุดิบ</h4>
+                                        <div class="mb-3">
+                                            <label class="form-label text-muted small">ชื่อสูตร / เมนู</label>
+                                            <input type="text" class="form-control form-control-lg bg-light" id="calc-name" placeholder="เช่น มัทฉะลาเต้เย็น 16oz" required>
+                                        </div>
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-sm-6">
+                                                <label class="form-label text-muted small">ราคาผงมัทฉะ (บาท/100g)</label>
+                                                <input type="number" class="form-control calc-input bg-light" id="calc-matcha-price" value="590" min="0">
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="form-label text-muted small">ปริมาณที่ใช้ (กรัม)</label>
+                                                <input type="number" class="form-control calc-input bg-light" id="calc-matcha-use" value="5" min="0">
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-sm-6">
+                                                <label class="form-label text-muted small">ราคานม (บาท/1000ml)</label>
+                                                <input type="number" class="form-control calc-input bg-light" id="calc-milk-price" value="50" min="0">
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="form-label text-muted small">ปริมาณที่ใช้ (ml)</label>
+                                                <input type="number" class="form-control calc-input bg-light" id="calc-milk-use" value="150" min="0">
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-sm-6">
+                                                <label class="form-label text-muted small">ราคาแพคเกจจิ้ง (บาท/แก้ว)</label>
+                                                <input type="number" class="form-control calc-input bg-light" id="calc-packaging" value="4" min="0">
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="form-label fw-bold text-dark">ราคาขายที่ต้องการ</label>
+                                                <input type="number" class="form-control calc-input border-success" id="calc-sell-price" value="85" min="0">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="sticky-top" style="top: 100px;">
+                                            <div class="p-4 rounded-4 mb-4 text-center" style="background-color: var(--matcha-primary); color: white;">
+                                                <p class="mb-1 opacity-75">ต้นทุนรวมต่อแก้ว</p>
+                                                <h2 class="display-5 fw-bold mb-0">฿<span id="res-total-cost">0.00</span></h2>
+                                            </div>
+                                            <div class="card border border-light shadow-sm mb-4">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between mb-2"><span>ราคาขาย</span><span class="fw-bold">฿<span id="res-sell">0.00</span></span></div>
+                                                    <div class="d-flex justify-content-between mb-2 text-success"><span>กำไรต่อแก้ว</span><span class="fw-bold">฿<span id="res-profit">0.00</span></span></div>
+                                                    <div class="d-flex justify-content-between mb-0 text-primary"><span>อัตรากำไร (Margin)</span><span class="fw-bold"><span id="res-margin">0</span>%</span></div>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-matcha w-100 py-3 d-flex align-items-center justify-content-center" id="btn-save-calc">
+                                                <i class="bi bi-cloud-arrow-up fs-5 me-2"></i> บันทึกลงฐานข้อมูล
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-5" data-aos="fade-up">
+                                <h4 class="mb-3">ประวัติการคำนวณ</h4>
+                                <div class="table-responsive table-custom">
+                                    <table class="table table-hover mb-0">
+                                        <thead><tr><th>ชื่อเมนู</th><th>ต้นทุน</th><th>ราคาขาย</th><th>กำไร</th><th>Margin</th><th>วันที่</th></tr></thead>
+                                        <tbody id="saved-calcs-tbody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- VIEW: LOGIN -->
+        <div id="view-login" class="view-section">
+            <section class="py-5 mt-5">
+                <div class="container">
+                    <div class="auth-container text-center" data-aos="zoom-in">
+                        <i class="bi bi-shield-lock-fill text-success" style="font-size: 3rem;"></i>
+                        <h3 class="fw-bold mt-2 mb-4">Admin Login</h3>
+                        <form id="login-form">
+                            <div class="mb-3 text-start">
+                                <label class="form-label text-muted small">Email Address</label>
+                                <input type="email" class="form-control bg-light" id="auth-email" required>
+                            </div>
+                            <div class="mb-4 text-start">
+                                <label class="form-label text-muted small">Password</label>
+                                <input type="password" class="form-control bg-light" id="auth-password" required>
+                            </div>
+                            <button type="submit" class="btn btn-matcha w-100 mb-3" id="btn-login-submit">เข้าสู่ระบบ</button>
+                            <a href="#home" class="text-muted small text-decoration-none">กลับหน้าแรก</a>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- VIEW: ADMIN (Protected) -->
+        <div id="view-admin" class="view-section">
+            <div class="bg-light py-4 border-bottom mt-4">
+                <div class="container">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <h2 class="mb-0 fw-bold"><i class="bi bi-gear-fill me-2 text-muted"></i>ระบบจัดการหลังบ้าน</h2>
+                        <div>
+                            <span class="badge bg-success me-3"><i class="bi bi-person-check-fill me-1"></i>แอดมินยืนยันตัวตนแล้ว</span>
+                            <button class="btn btn-sm btn-outline-danger" id="btn-logout">ออกจากระบบ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-end mb-3">
+                            <h4 class="mb-0">จัดการสินค้า</h4>
+                            <button class="btn btn-sm btn-matcha" onclick="window.openProductModal()"><i class="bi bi-plus-lg"></i> เพิ่มสินค้า</button>
+                        </div>
+                        <div class="table-responsive table-custom">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead><tr><th width="200">ชื่อสินค้า</th><th>รายละเอียด</th><th width="100">ราคา</th><th width="150" class="text-end">จัดการ</th></tr></thead>
+                                <tbody id="admin-products-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-5">
+                        <div class="d-flex justify-content-between align-items-end mb-3">
+                            <h4 class="mb-0">จัดการสูตร</h4>
+                            <button class="btn btn-sm btn-matcha" onclick="window.openRecipeModal()"><i class="bi bi-plus-lg"></i> เพิ่มสูตร</button>
+                        </div>
+                        <div class="table-responsive table-custom">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead><tr><th width="250">ชื่อสูตร</th><th>ระดับ</th><th width="150" class="text-end">จัดการ</th></tr></thead>
+                                <tbody id="admin-recipes-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content border-0 shadow">
+        <div class="modal-header bg-light border-0"><h5 class="modal-title" id="productModalLabel">จัดการสินค้า</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <input type="hidden" id="prod-id">
+            <div class="mb-3"><label class="form-label">ชื่อ</label><input type="text" class="form-control" id="prod-name" required></div>
+            <div class="mb-3"><label class="form-label">คำอธิบาย</label><textarea class="form-control" id="prod-desc" rows="3" required></textarea></div>
+            <div class="mb-3"><label class="form-label">ราคา (฿)</label><input type="number" class="form-control" id="prod-price" required></div>
+            <div class="mb-3"><label class="form-label">URL รูปภาพ</label><input type="text" class="form-control" id="prod-image"></div>
+            <div class="mb-3"><label class="form-label text-primary"><i class="bi bi-link-45deg"></i> ลิงก์ Affiliate (Shopee/Lazada)</label><input type="url" class="form-control border-primary" id="prod-affiliate"></div>
+        </div>
+        <div class="modal-footer border-0"><button class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button><button class="btn btn-matcha" onclick="window.saveProduct()">บันทึก</button></div>
+    </div></div></div>
+
+    <div class="modal fade" id="recipeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content border-0 shadow">
+        <div class="modal-header bg-light border-0"><h5 class="modal-title" id="recipeModalLabel">จัดการสูตร</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <input type="hidden" id="rec-id">
+            <div class="mb-3"><label class="form-label">ชื่อสูตร</label><input type="text" class="form-control" id="rec-name" required></div>
+            <div class="mb-3"><label class="form-label">ส่วนผสม</label><input type="text" class="form-control" id="rec-ingredients" required></div>
+            <div class="mb-3"><label class="form-label">ระดับ</label><select class="form-select" id="rec-difficulty"><option>ง่าย</option><option>ปานกลาง</option><option>ยาก</option></select></div>
+            <div class="mb-3"><label class="form-label">URL รูปภาพ</label><input type="text" class="form-control" id="rec-image"></div>
+        </div>
+        <div class="modal-footer border-0"><button class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button><button class="btn btn-matcha" onclick="window.saveRecipe()">บันทึก</button></div>
+    </div></div></div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- โหลด Supabase Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // ==========================================
+        // ⚠️ กรอกค่าจากโปรเจกต์ SUPABASE ของคุณที่นี่ ⚠️
+        // ==========================================
+        const SUPABASE_URL = 'https://wfjlbgzcuzurmjfwcucr.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmamxiZ3pjdXp1cm1qZndjdWNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNTI3MTAsImV4cCI6MjA5NDYyODcxMH0.rX0JkP-LdXPCF5m8gHiTEcsiPF2mKFLjVPRKQhfhdGs';
+        
+        let supabase;
+        let currentUser = null;
+        let productModalInst, recipeModalInst;
+
+        // ฟังก์ชันแจ้งเตือน UI
+        window.showToast = function(message, type = 'success') {
+            const id = 'toast-' + Date.now();
+            const bg = type === 'success' ? 'bg-success' : (type === 'danger' ? 'bg-danger' : 'bg-primary');
+            const html = `<div id="${id}" class="toast align-items-center text-white ${bg} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true"><div class="d-flex"><div class="toast-body">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>`;
+            document.getElementById('toastContainer').insertAdjacentHTML('beforeend', html);
+            const el = document.getElementById(id);
+            const t = new bootstrap.Toast(el, { delay: 3000 });
+            t.show();
+            el.addEventListener('hidden.bs.toast', () => el.remove());
+        };
+
+        // เริ่มต้นการเชื่อมต่อ
+        try {
+            if(SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+                console.warn("⚠️ แจ้งเตือน: ยังไม่ได้ใส่ Supabase URL & Key ข้อมูลจะไม่สามารถดึงได้");
+            }
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch(e) {
+            console.error("Supabase Init Error", e);
+        }
+
+        async function checkSessionAndRoute() {
+            if(supabase) {
+                const { data: { session } } = await supabase.auth.getSession();
+                currentUser = session?.user || null;
+            }
+            updateNavAuth();
+            handleRoute();
+            
+            // ปิดหน้าจอโหลดเมื่อเสร็จสิ้น
+            const loader = document.getElementById('loading-overlay');
+            if(loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 500);
+            }
+        }
+
+        function updateNavAuth() {
+            const container = document.getElementById('nav-auth-section');
+            if(currentUser) {
+                container.innerHTML = `<a href="#admin" class="btn btn-sm btn-outline-success"><i class="bi bi-gear-fill me-1"></i>แอดมิน</a>`;
+            } else {
+                container.innerHTML = `<a href="#login" class="nav-link small text-muted"><i class="bi bi-lock-fill"></i></a>`;
+            }
+        }
+
+        function handleRoute() {
+            let hash = window.location.hash || '#home';
+            
+            // Auth Guard: ถ้าเข้าหน้า #admin แต่ยังไม่ล็อกอิน ให้เด้งไป #login
+            if(hash === '#admin' && !currentUser) {
+                window.location.hash = '#login';
+                return;
+            }
+            // ถ้าล็อกอินแล้ว เข้าหน้า #login ให้เด้งไป #admin เลย
+            if(hash === '#login' && currentUser) {
+                window.location.hash = '#admin';
+                return;
+            }
+
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active', 'fw-bold'));
+            const activeLink = document.querySelector(`.nav-link[href="${hash}"]`);
+            if(activeLink) activeLink.classList.add('active', 'fw-bold');
+
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            const view = document.getElementById('view-' + hash.replace('#', ''));
+            
+            if(view) {
+                view.classList.add('active');
+                window.scrollTo(0,0);
+                if(hash === '#home' || hash === '#recipes') renderPublicViews();
+                if(hash === '#admin') renderAdminViews();
+                AOS.refresh();
+            } else {
+                document.getElementById('view-home').classList.add('active');
+                window.location.hash = '#home';
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(!supabase) return alert("ยังไม่ได้ตั้งค่า Supabase Key");
+            
+            const btn = document.getElementById('btn-login-submit');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> กำลังเข้าสู่ระบบ...';
+            btn.disabled = true;
+
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            
+            btn.innerHTML = 'เข้าสู่ระบบ';
+            btn.disabled = false;
+
+            if(error) {
+                window.showToast('อีเมลหรือรหัสผ่านไม่ถูกต้อง', 'danger');
+            } else {
+                currentUser = data.user;
+                window.showToast('เข้าสู่ระบบสำเร็จ', 'success');
+                window.location.hash = '#admin';
+                updateNavAuth();
+            }
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', async () => {
+            if(supabase) await supabase.auth.signOut();
+            currentUser = null;
+            window.showToast('ออกจากระบบเรียบร้อย');
+            window.location.hash = '#home';
+            updateNavAuth();
+        });
+
+        // ฟังการเปลี่ยนแปลง Auth สถานะ (กรณีหมดอายุ ฯลฯ)
+        if(supabase) {
+            supabase.auth.onAuthStateChange((event, session) => {
+                currentUser = session?.user || null;
+                updateNavAuth();
+            });
+        }
+
+        const API = {
+            getProducts: async () => {
+                if(!supabase) return [];
+                const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: true });
+                if(error) console.error(error);
+                return data || [];
+            },
+            addProduct: async (d) => { await supabase.from('products').insert([d]); },
+            updateProduct: async (id, d) => { await supabase.from('products').update(d).eq('id', id); },
+            deleteProduct: async (id) => { await supabase.from('products').delete().eq('id', id); },
+            
+            getRecipes: async () => {
+                if(!supabase) return [];
+                const { data, error } = await supabase.from('recipes').select('*').order('created_at', { ascending: true });
+                return data || [];
+            },
+            addRecipe: async (d) => { await supabase.from('recipes').insert([d]); },
+            updateRecipe: async (id, d) => { await supabase.from('recipes').update(d).eq('id', id); },
+            deleteRecipe: async (id) => { await supabase.from('recipes').delete().eq('id', id); },
+
+            addCalculation: async (d) => {
+                d.created_at_str = new Date().toLocaleDateString('th-TH') + ' ' + new Date().toLocaleTimeString('th-TH');
+                await supabase.from('calculations').insert([d]);
+            }
+        };
+
+        async function renderPublicViews() {
+            const products = await API.getProducts();
+            const recipes = await API.getRecipes();
+
+            document.getElementById('home-products-container').innerHTML = products.slice(0,3).map(p => `
+                <div class="col-md-4" data-aos="fade-up">
+                    <a href="${p.affiliate_url || '#'}" target="${p.affiliate_url ? '_blank' : '_self'}" class="product-card-link">
+                        <div class="matcha-card card">
+                            <div class="card-img-placeholder" style="background-image: url('${p.image_url}')"></div>
+                            <div class="card-body p-4 d-flex flex-column">
+                                <h5 class="fw-bold">${p.name}</h5>
+                                <p class="text-muted small mb-3 flex-grow-1">${p.description}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                    <span class="fw-bold fs-5 text-dark">฿${p.price}</span>
+                                    <span class="btn btn-sm btn-matcha"><i class="bi bi-cart3 me-1"></i> สั่งซื้อ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            `).join('') || '<p class="text-center text-muted">ยังไม่มีข้อมูลสินค้า</p>';
+
+            const tplRecipe = (r) => `
+                <div class="col-md-4 col-sm-6" data-aos="fade-up">
+                    <div class="matcha-card recipe-card card border-0 bg-transparent">
+                        <div class="card-img-placeholder rounded-4 mb-3 shadow-sm" style="background-image: url('${r.image_url}')"></div>
+                        <h5 class="fw-bold px-2">${r.title}</h5>
+                        <p class="text-muted small px-2 mb-2"><i class="bi bi-list-check me-1"></i> ${r.ingredients_summary}</p>
+                        <span class="badge bg-light text-dark border mx-2 mb-3 align-self-start">ระดับ: ${r.difficulty}</span>
+                    </div>
+                </div>`;
+            
+            document.getElementById('home-recipes-container').innerHTML = recipes.slice(0,3).map(tplRecipe).join('');
+            document.getElementById('all-recipes-container').innerHTML = recipes.map(tplRecipe).join('');
+        }
+
+        async function renderAdminViews() {
+            if(!currentUser) return; // Prevent render if not authed
+            
+            const products = await API.getProducts();
+            const recipes = await API.getRecipes();
+
+            document.getElementById('admin-products-tbody').innerHTML = products.map(p => `
+                <tr>
+                    <td class="fw-bold">${p.name}<br>${p.affiliate_url ? `<a href="${p.affiliate_url}" target="_blank" class="badge bg-primary text-decoration-none mt-1"><i class="bi bi-link"></i> ลิงก์</a>` : ''}</td>
+                    <td class="text-muted small">${p.description}</td>
+                    <td>฿${p.price}</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-light text-primary me-1" onclick='window.editProduct(${JSON.stringify(p)})'><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-light text-danger" onclick='window.deleteProduct("${p.id}")'><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('admin-recipes-tbody').innerHTML = recipes.map(r => `
+                <tr>
+                    <td class="fw-bold">${r.title}</td>
+                    <td><span class="badge bg-light text-dark border">${r.difficulty}</span></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-light text-primary me-1" onclick='window.editRecipe(${JSON.stringify(r)})'><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-light text-danger" onclick='window.deleteRecipe("${r.id}")'><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function initCalculator() {
+            document.querySelectorAll('.calc-input').forEach(i => i.addEventListener('input', calculateCost));
+            
+            document.getElementById('btn-save-calc').addEventListener('click', async () => {
+                const name = document.getElementById('calc-name').value.trim();
+                if(!name) return window.showToast('กรุณากรอกชื่อเมนูก่อนบันทึก', 'danger');
+                if(!supabase) return window.showToast('ไม่ได้เชื่อมต่อฐานข้อมูล', 'danger');
+
+                await API.addCalculation({
+                    menu_name: name, total_cost: parseFloat(document.getElementById('res-total-cost').innerText),
+                    sell_price: parseFloat(document.getElementById('res-sell').innerText),
+                    profit: parseFloat(document.getElementById('res-profit').innerText),
+                    margin_percent: parseFloat(document.getElementById('res-margin').innerText)
+                });
+                window.showToast('บันทึกสำเร็จ'); document.getElementById('calc-name').value = '';
+            });
+
+            calculateCost();
+            
+            // Supabase Realtime for calculations
+            if(supabase) {
+                const fetchCalcs = async () => {
+                    const {data} = await supabase.from('calculations').select('*').order('created_at', {ascending: false});
+                    const tb = document.getElementById('saved-calcs-tbody');
+                    if(!data || data.length === 0) tb.innerHTML = '<tr><td colspan="6" class="text-center text-muted">ยังไม่มีข้อมูล</td></tr>';
+                    else tb.innerHTML = data.map(c => `<tr><td class="fw-bold">${c.menu_name}</td><td>฿${c.total_cost.toFixed(2)}</td><td>฿${c.sell_price.toFixed(2)}</td><td class="${c.profit<0?'text-danger':'text-success'} fw-bold">฿${c.profit.toFixed(2)}</td><td>${c.margin_percent.toFixed(1)}%</td><td class="text-muted small">${c.created_at_str}</td></tr>`).join('');
+                };
+                fetchCalcs();
+                supabase.channel('public:calculations').on('postgres_changes', {event:'*', schema:'public', table:'calculations'}, fetchCalcs).subscribe();
+            }
+        }
+
+        function calculateCost() {
+            const getV = (id) => parseFloat(document.getElementById(id).value) || 0;
+            const cost = ((getV('calc-matcha-price')/100)*getV('calc-matcha-use')) + ((getV('calc-milk-price')/1000)*getV('calc-milk-use')) + getV('calc-packaging');
+            const sell = getV('calc-sell-price'); const profit = sell - cost; const margin = sell > 0 ? (profit/sell)*100 : 0;
+            
+            document.getElementById('res-total-cost').innerText = cost.toFixed(2);
+            document.getElementById('res-sell').innerText = sell.toFixed(2);
+            document.getElementById('res-profit').innerText = profit.toFixed(2);
+            document.getElementById('res-margin').innerText = margin.toFixed(1);
+            document.getElementById('res-profit').parentElement.className = profit < 0 ? 'd-flex justify-content-between mb-2 text-danger' : 'd-flex justify-content-between mb-2 text-success';
+        }
+
+        // Window Globals for Modals
+        window.openProductModal = () => { document.getElementById('prod-id').value=''; document.getElementById('prod-name').value=''; document.getElementById('prod-desc').value=''; document.getElementById('prod-price').value=''; document.getElementById('prod-image').value=''; document.getElementById('prod-affiliate').value=''; document.getElementById('productModalLabel').innerText='เพิ่มสินค้า'; productModalInst.show(); };
+        window.editProduct = (p) => { document.getElementById('prod-id').value=p.id; document.getElementById('prod-name').value=p.name; document.getElementById('prod-desc').value=p.description; document.getElementById('prod-price').value=p.price; document.getElementById('prod-image').value=p.image_url||''; document.getElementById('prod-affiliate').value=p.affiliate_url||''; document.getElementById('productModalLabel').innerText='แก้ไขสินค้า'; productModalInst.show(); };
+        window.saveProduct = async () => {
+            const data = { name: document.getElementById('prod-name').value, description: document.getElementById('prod-desc').value, price: parseFloat(document.getElementById('prod-price').value), image_url: document.getElementById('prod-image').value || `https://placehold.co/400x300/78866B/FFF?text=${encodeURIComponent(document.getElementById('prod-name').value)}`, affiliate_url: document.getElementById('prod-affiliate').value };
+            if(!data.name || !data.price) return window.showToast('กรอกข้อมูลไม่ครบ', 'danger');
+            const id = document.getElementById('prod-id').value;
+            if(id) { await API.updateProduct(id, data); window.showToast('อัพเดทเรียบร้อย'); } else { await API.addProduct(data); window.showToast('เพิ่มเรียบร้อย'); }
+            productModalInst.hide(); renderAdminViews(); renderPublicViews();
+        };
+        window.deleteProduct = async (id) => { await API.deleteProduct(id); window.showToast('ลบเรียบร้อย'); renderAdminViews(); renderPublicViews(); };
+
+        window.openRecipeModal = () => { document.getElementById('rec-id').value=''; document.getElementById('rec-name').value=''; document.getElementById('rec-ingredients').value=''; document.getElementById('rec-difficulty').value='ง่าย'; document.getElementById('rec-image').value=''; document.getElementById('recipeModalLabel').innerText='เพิ่มสูตร'; recipeModalInst.show(); };
+        window.editRecipe = (r) => { document.getElementById('rec-id').value=r.id; document.getElementById('rec-name').value=r.title; document.getElementById('rec-ingredients').value=r.ingredients_summary; document.getElementById('rec-difficulty').value=r.difficulty; document.getElementById('rec-image').value=r.image_url||''; document.getElementById('recipeModalLabel').innerText='แก้ไขสูตร'; recipeModalInst.show(); };
+        window.saveRecipe = async () => {
+            const data = { title: document.getElementById('rec-name').value, ingredients_summary: document.getElementById('rec-ingredients').value, difficulty: document.getElementById('rec-difficulty').value, image_url: document.getElementById('rec-image').value || `https://placehold.co/400x300/FDFBF7/78866B?text=${encodeURIComponent(document.getElementById('rec-name').value)}` };
+            if(!data.title || !data.ingredients_summary) return window.showToast('กรอกข้อมูลไม่ครบ', 'danger');
+            const id = document.getElementById('rec-id').value;
+            if(id) { await API.updateRecipe(id, data); window.showToast('อัพเดทเรียบร้อย'); } else { await API.addRecipe(data); window.showToast('เพิ่มเรียบร้อย'); }
+            recipeModalInst.hide(); renderAdminViews(); renderPublicViews();
+        };
+        window.deleteRecipe = async (id) => { await API.deleteRecipe(id); window.showToast('ลบเรียบร้อย'); renderAdminViews(); renderPublicViews(); };
+
+        // Initialization
+        window.addEventListener('hashchange', handleRoute);
+        document.addEventListener('DOMContentLoaded', () => {
+            AOS.init({ duration: 800, once: true, offset: 50 });
+            productModalInst = new bootstrap.Modal(document.getElementById('productModal'));
+            recipeModalInst = new bootstrap.Modal(document.getElementById('recipeModal'));
+            initCalculator();
+            checkSessionAndRoute();
+        });
+    </script>
+</body>
+</html>
