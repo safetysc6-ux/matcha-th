@@ -583,7 +583,7 @@
             const html = `<div id="${id}" class="toast align-items-center text-white ${bg} border-0 mb-2 shadow-lg rounded-3" role="alert" aria-live="assertive" aria-atomic="true"><div class="d-flex"><div class="toast-body fw-500 px-3 py-3">${message}</div><button type="button" class="btn-close btn-close-white me-3 m-auto" data-bs-dismiss="toast"></button></div></div>`;
             document.getElementById('toastContainer').insertAdjacentHTML('beforeend', html);
             const el = document.getElementById(id);
-            const t = new bootstrap.Toast(el, { delay: 3500 });
+            const t = new bootstrap.Toast(el, { delay: 4000 });
             t.show();
             el.addEventListener('hidden.bs.toast', () => el.remove());
         };
@@ -702,13 +702,24 @@
 
         const API = {
             uploadImage: async (file) => {
-                if(!supabaseClient) return null;
+                if(!supabaseClient) throw new Error("ไม่ได้เชื่อมต่อ Supabase");
+                
                 const fileExt = file.name.split('.').pop();
                 const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+                // ใช้โฟลเดอร์ public/ ตามปกติ
                 const filePath = `public/${fileName}`;
 
-                const { error } = await supabaseClient.storage.from('images').upload(filePath, file);
-                if (error) throw error;
+                // เพิ่มตัวเลือก upsert เพื่อป้องกันชื่อซ้ำและเขียนทับได้
+                const { error } = await supabaseClient.storage.from('images').upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: true
+                });
+                
+                if (error) {
+                    console.error("Storage upload error:", error);
+                    // โยน error ออกไปเพื่อให้ catch จับและโชว์ใน Toast
+                    throw new Error(error.message || 'อัพโหลดรูปภาพไม่สำเร็จ (อาจติด RLS Policy)');
+                }
                 
                 const { data } = supabaseClient.storage.from('images').getPublicUrl(filePath);
                 return data.publicUrl;
@@ -941,8 +952,10 @@
                 
                 productModalInst.hide(); renderAdminViews(); renderPublicViews();
             } catch(e) {
-                window.showToast('เกิดข้อผิดพลาดในการอัพโหลดรูปภาพ', 'danger');
-                console.error(e);
+                // ดึงข้อความ Error มาโชว์ให้เห็นชัดๆ
+                const errorMsg = e.message || 'กรุณาเช็คตั้งค่า Policy ใน Supabase';
+                window.showToast('อัพโหลดไม่สำเร็จ: ' + errorMsg, 'danger');
+                console.error("Save Product Error:", e);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'บันทึกข้อมูล';
@@ -1010,8 +1023,10 @@
                 
                 recipeModalInst.hide(); renderAdminViews(); renderPublicViews();
             } catch(e) {
-                window.showToast('เกิดข้อผิดพลาดในการอัพโหลดรูปภาพ', 'danger');
-                console.error(e);
+                // ดึงข้อความ Error มาโชว์ให้เห็นชัดๆ
+                const errorMsg = e.message || 'กรุณาเช็คตั้งค่า Policy ใน Supabase';
+                window.showToast('อัพโหลดไม่สำเร็จ: ' + errorMsg, 'danger');
+                console.error("Save Recipe Error:", e);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'บันทึกข้อมูล';
